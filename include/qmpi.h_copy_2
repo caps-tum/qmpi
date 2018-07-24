@@ -1,0 +1,1227 @@
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dlfcn.h>
+
+
+#define NUM_FUNCS 3
+
+typedef void* dynamic_lib_handle;
+
+struct dynamic_lib {
+
+        char                            path[100];
+        //char*                         path;
+        dynamic_lib_handle              handle;
+        char*                           mpi_interceptions[NUM_FUNCS ];
+        void*                           table[NUM_FUNCS];
+
+};
+
+typedef int (*mpifunc)(int i , struct dynamic_lib vec[]);
+typedef char* (*mpi_func)(int i);
+
+int End_Tool (int i, struct dynamic_lib vec[] );
+dynamic_lib_handle load_lib (const char* path);
+void*    get_func_ptr( const dynamic_lib_handle handle, char* func_name );
+int      exec_func(void* func_ptr, int level ,struct dynamic_lib vec[] );
+void     get_tool_interceptions( struct dynamic_lib* l );
+int      QMPI_Table_query(int func_index, void** func_ptr, void* table[]  );
+
+
+
+
+
+#ifndef VECTOR_H
+#define VECTOR_H
+
+#define VECTOR_INIT_CAPACITY 4
+
+/*
+#define VECTOR_INIT(vec) vector vec; vector_init(&vec)
+#define VECTOR_ADD(vec, item) vector_add(&vec, (void *) item)
+#define VECTOR_SET(vec, id, item) vector_set(&vec, id, (void *) item)
+#define VECTOR_GET(vec, type, id) (type) vector_get(&vec, id)
+#define VECTOR_DELETE(vec, id) vector_delete(&vec, id)
+#define VECTOR_TOTAL(vec) vector_total(&vec)
+#define VECTOR_FREE(vec) vector_free(&vec)
+*/
+typedef struct vector {
+    void **items;
+    int capacity;
+    int total;
+} vector;
+
+void vector_init(vector *);
+int vector_total(vector *);
+static void vector_resize(vector *, int);
+void vector_add(vector *, void *);
+void vector_set(vector *, int, void *);
+void *vector_get(vector *, int);
+void vector_delete(vector *, int);
+void vector_free(vector *);
+
+#endif
+
+void vector_init(vector *v)
+{
+    v->capacity = VECTOR_INIT_CAPACITY;
+    v->total = 0;
+    v->items = malloc(sizeof(void *) * v->capacity);
+}
+
+int vector_total(vector *v)
+{
+    return v->total;
+}
+
+static void vector_resize(vector *v, int capacity)
+{
+    #ifdef DEBUG_ON
+    printf("vector_resize: %d to %d\n", v->capacity, capacity);
+    #endif
+
+    void **items = realloc(v->items, sizeof(void *) * capacity);
+    if (items) {
+        v->items = items;
+        v->capacity = capacity;
+    }
+}
+
+void vector_add(vector *v, void *item)
+{
+    if (v->capacity == v->total)
+        vector_resize(v, v->capacity * 2);
+    v->items[v->total++] = item;
+}
+
+void vector_set(vector *v, int index, void *item)
+{
+    if (index >= 0 && index < v->total)
+        v->items[index] = item;
+}
+
+void *vector_get(vector *v, int index)
+{
+    if (index >= 0 && index < v->total)
+        return v->items[index];
+    return NULL;
+}
+
+void vector_delete(vector *v, int index)
+{
+    if (index < 0 || index >= v->total)
+        return;
+
+    v->items[index] = NULL;
+
+    for (int i = index; i < v->total - 1; i++) {
+        v->items[i] = v->items[i + 1];
+        v->items[i + 1] = NULL;
+    }
+
+    v->total--;
+
+    if (v->total > 0 && v->total == v->capacity / 4)
+        vector_resize(v, v->capacity / 2);
+}
+
+void vector_free(vector *v)
+{
+    free(v->items);
+}
+
+
+
+
+
+
+
+
+/* ================== C Wrappers for MPI_Send ================== */
+    int QMPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+/* ================== C Wrappers for MPI_Recv ================== */
+    int QMPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Abort ================== */
+    int QMPI_Abort(MPI_Comm comm, int errorcode);
+
+/* ================== C Wrappers for MPI_Accumulate ================== */
+    int QMPI_Accumulate(const void *origin_addr, int origin_count, MPI_Datatype origin_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Op op, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Add_error_class ================== */
+    int QMPI_Add_error_class(int *errorclass);
+
+/* ================== C Wrappers for MPI_Add_error_code ================== */
+    int QMPI_Add_error_code(int errorclass, int *errorcode);
+
+/* ================== C Wrappers for MPI_Add_error_string ================== */
+    int QMPI_Add_error_string(int errorcode, const char *string);
+
+/* ================== C Wrappers for MPI_Address ================== */
+    int QMPI_Address(void *location, MPI_Aint *address);
+
+/* ================== C Wrappers for MPI_Allgather ================== */
+    int QMPI_Allgather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Allgatherv ================== */
+    int QMPI_Allgatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Alloc_mem ================== */
+    int QMPI_Alloc_mem(MPI_Aint size, MPI_Info info, void *baseptr);
+
+/* ================== C Wrappers for MPI_Allreduce ================== */
+    int QMPI_Allreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Alltoall ================== */
+    int QMPI_Alltoall(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Alltoallv ================== */
+    int QMPI_Alltoallv(const void *sendbuf, const int sendcounts[], const int sdispls[], MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int rdispls[], MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Alltoallw ================== */
+    int QMPI_Alltoallw(const void *sendbuf, const int sendcounts[], const int sdispls[], const MPI_Datatype sendtypes[], void *recvbuf, const int recvcounts[], const int rdispls[], const MPI_Datatype recvtypes[], MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Attr_delete ================== */
+    int QMPI_Attr_delete(MPI_Comm comm, int keyval);
+
+/* ================== C Wrappers for MPI_Attr_get ================== */
+    int QMPI_Attr_get(MPI_Comm comm, int keyval, void *attribute_val, int *flag);
+
+/* ================== C Wrappers for MPI_Attr_put ================== */
+    int QMPI_Attr_put(MPI_Comm comm, int keyval, void *attribute_val);
+
+/* ================== C Wrappers for MPI_Barrier ================== */
+    int QMPI_Barrier(MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Bcast ================== */
+    int QMPI_Bcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Bsend ================== */
+/* ================== C Wrappers for MPI_Bcast ================== */
+    int QMPI_Bcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Bsend ================== */
+    int QMPI_Bsend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Bsend_init ================== */
+    int QMPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Buffer_attach ================== */
+    int QMPI_Buffer_attach(void *buffer, int size);
+
+/* ================== C Wrappers for MPI_Buffer_detach ================== */
+    int QMPI_Buffer_detach(void *buffer, int *size);
+
+/* ================== C Wrappers for MPI_Cancel ================== */
+    int QMPI_Cancel(MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Cart_coords ================== */
+    int QMPI_Cart_coords(MPI_Comm comm, int rank, int maxdims, int coords[]);
+
+/* ================== C Wrappers for MPI_Cart_create ================== */
+    int QMPI_Cart_create(MPI_Comm old_comm, int ndims, const int dims[], const int periods[], int reorder, MPI_Comm *comm_cart);
+
+/* ================== C Wrappers for MPI_Cart_get ================== */
+    int QMPI_Cart_get(MPI_Comm comm, int maxdims, int dims[], int periods[], int coords[]);
+
+/* ================== C Wrappers for MPI_Cart_map ================== */
+    int QMPI_Cart_map(MPI_Comm comm, int ndims, const int dims[], const int periods[], int *newrank);
+
+/* ================== C Wrappers for MPI_Cart_rank ================== */
+    int QMPI_Cart_rank(MPI_Comm comm, const int coords[], int *rank);
+
+/* ================== C Wrappers for MPI_Cart_shift ================== */
+    int QMPI_Cart_shift(MPI_Comm comm, int direction, int disp, int *rank_source, int *rank_dest);
+
+/* ================== C Wrappers for MPI_Cart_sub ================== */
+    int QMPI_Cart_sub(MPI_Comm comm, const int remain_dims[], MPI_Comm *new_comm);
+
+/* ================== C Wrappers for MPI_Cartdim_get ================== */
+    int QMPI_Cartdim_get(MPI_Comm comm, int *ndims);
+
+/* ================== C Wrappers for MPI_Close_port ================== */
+    int QMPI_Close_port(const char *port_name);
+
+/* ================== C Wrappers for MPI_Comm_accept ================== */
+    int QMPI_Comm_accept(const char *port_name, MPI_Info info, int root, MPI_Comm comm, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_call_errhandler ================== */
+    int QMPI_Comm_call_errhandler(MPI_Comm comm, int errorcode);
+
+/* ================== C Wrappers for MPI_Comm_compare ================== */
+    int QMPI_Comm_compare(MPI_Comm comm1, MPI_Comm comm2, int *result);
+
+/* ================== C Wrappers for MPI_Comm_connect ================== */
+    int QMPI_Comm_connect(const char *port_name, MPI_Info info, int root, MPI_Comm comm, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_create ================== */
+    int QMPI_Comm_create(MPI_Comm comm, MPI_Group group, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_create_errhandler ================== */
+    int QMPI_Comm_create_errhandler(MPI_Comm_errhandler_function *function, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_Comm_create_group ================== */
+    int QMPI_Comm_create_group(MPI_Comm comm, MPI_Group group, int tag, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_create_keyval ================== */
+    int QMPI_Comm_create_keyval(MPI_Comm_copy_attr_function *comm_copy_attr_fn, MPI_Comm_delete_attr_function *comm_delete_attr_fn, int *comm_keyval, void *extra_state);
+
+/* ================== C Wrappers for MPI_Comm_delete_attr ================== */
+    int QMPI_Comm_delete_attr(MPI_Comm comm, int comm_keyval);
+
+/* ================== C Wrappers for MPI_Comm_disconnect ================== */
+    int QMPI_Comm_disconnect(MPI_Comm *comm);
+
+/* ================== C Wrappers for MPI_Comm_dup ================== */
+    int QMPI_Comm_dup(MPI_Comm comm, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_dup_with_info ================== */
+    int QMPI_Comm_dup_with_info(MPI_Comm comm, MPI_Info info, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_free ================== */
+    int QMPI_Comm_free(MPI_Comm *comm);
+
+/* ================== C Wrappers for MPI_Comm_free_keyval ================== */
+    int QMPI_Comm_free_keyval(int *comm_keyval);
+
+/* ================== C Wrappers for MPI_Comm_get_attr ================== */
+    int QMPI_Comm_get_attr(MPI_Comm comm, int comm_keyval, void *attribute_val, int *flag);
+
+/* ================== C Wrappers for MPI_Comm_get_errhandler ================== */
+    int QMPI_Comm_get_errhandler(MPI_Comm comm, MPI_Errhandler *erhandler);
+
+/* ================== C Wrappers for MPI_Comm_get_info ================== */
+    int QMPI_Comm_get_info(MPI_Comm comm, MPI_Info *info_used);
+
+/* ================== C Wrappers for MPI_Comm_get_name ================== */
+    int QMPI_Comm_get_name(MPI_Comm comm, char *comm_name, int *resultlen);
+
+/* ================== C Wrappers for MPI_Comm_get_parent ================== */
+    int QMPI_Comm_get_parent(MPI_Comm *parent);
+
+/* ================== C Wrappers for MPI_Comm_group ================== */
+    int QMPI_Comm_group(MPI_Comm comm, MPI_Group *group);
+
+/* ================== C Wrappers for MPI_Comm_idup ================== */
+    int QMPI_Comm_idup(MPI_Comm comm, MPI_Comm *newcomm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Comm_join ================== */
+    int QMPI_Comm_join(int fd, MPI_Comm *intercomm);
+
+/* ================== C Wrappers for MPI_Comm_rank ================== */
+    int QMPI_Comm_rank(MPI_Comm comm, int *rank);//, std::map<std::string, void*> map);
+
+/* ================== C Wrappers for MPI_Comm_remote_group ================== */
+    int QMPI_Comm_remote_group(MPI_Comm comm, MPI_Group *group);
+
+/* ================== C Wrappers for MPI_Comm_remote_size ================== */
+    int QMPI_Comm_remote_size(MPI_Comm comm, int *size);
+
+/* ================== C Wrappers for MPI_Comm_set_attr ================== */
+    int QMPI_Comm_set_attr(MPI_Comm comm, int comm_keyval, void *attribute_val);
+
+/* ================== C Wrappers for MPI_Comm_set_errhandler ================== */
+    int QMPI_Comm_set_errhandler(MPI_Comm comm, MPI_Errhandler errhandler);
+
+/* ================== C Wrappers for MPI_Comm_set_info ================== */
+    int QMPI_Comm_set_info(MPI_Comm comm, MPI_Info info);
+
+/* ================== C Wrappers for MPI_Comm_set_name ================== */
+    int QMPI_Comm_set_name(MPI_Comm comm, const char *comm_name);
+
+/* ================== C Wrappers for MPI_Comm_size ================== */
+    int QMPI_Comm_size(MPI_Comm comm, int *size);
+
+/* ================== C Wrappers for MPI_Comm_split ================== */
+    int QMPI_Comm_split(MPI_Comm comm, int color, int key, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_split_type ================== */
+    int QMPI_Comm_split_type(MPI_Comm comm, int split_type, int key, MPI_Info info, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Comm_test_inter ================== */
+    int QMPI_Comm_test_inter(MPI_Comm comm, int *flag);
+
+
+/* ================== C Wrappers for MPI_Compare_and_swap ================== */
+    int QMPI_Compare_and_swap(const void *origin_addr, const void *compare_addr, void *result_addr, MPI_Datatype datatype, int target_rank, MPI_Aint target_disp, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Dims_create ================== */
+    int QMPI_Dims_create(int nnodes, int ndims, int dims[]);
+
+/* ================== C Wrappers for MPI_Dist_graph_create ================== */
+    int QMPI_Dist_graph_create(MPI_Comm comm_old, int n, const int nodes[], const int degrees[], const int targets[], const int weights[], MPI_Info info, int reorder, MPI_Comm *newcomm);
+
+/* ================== C Wrappers for MPI_Dist_graph_create_adjacent ================== */
+    int QMPI_Dist_graph_create_adjacent(MPI_Comm comm_old, int indegree, const int sources[], const int sourceweights[], int outdegree, const int destinations[], const int destweights[], MPI_Info info, int reorder, MPI_Comm *comm_dist_graph);
+
+/* ================== C Wrappers for MPI_Dist_graph_neighbors ================== */
+    int QMPI_Dist_graph_neighbors(MPI_Comm comm, int maxindegree, int sources[], int sourceweights[], int maxoutdegree, int destinations[], int destweights[]);
+
+/* ================== C Wrappers for MPI_Dist_graph_neighbors_count ================== */
+    int QMPI_Dist_graph_neighbors_count(MPI_Comm comm, int *inneighbors, int *outneighbors, int *weighted);
+
+/* ================== C Wrappers for MPI_Errhandler_create ================== */
+    int QMPI_Errhandler_create(MPI_Handler_function *function, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_Errhandler_free ================== */
+    int QMPI_Errhandler_free(MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_Errhandler_get ================== */
+    int QMPI_Errhandler_get(MPI_Comm comm, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_Errhandler_set ================== */
+    int QMPI_Errhandler_set(MPI_Comm comm, MPI_Errhandler errhandler);
+
+/* ================== C Wrappers for MPI_Error_class ================== */
+    int QMPI_Error_class(int errorcode, int *errorclass);
+
+/* ================== C Wrappers for MPI_Error_string ================== */
+    int QMPI_Error_string(int errorcode, char *string, int *resultlen);
+
+/* ================== C Wrappers for MPI_Exscan ================== */
+    int QMPI_Exscan(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Fetch_and_op ================== */
+    int QMPI_Fetch_and_op(const void *origin_addr, void *result_addr, MPI_Datatype datatype, int target_rank, MPI_Aint target_disp, MPI_Op op, MPI_Win win);
+
+/* ================== C Wrappers for MPI_File_call_errhandler ================== */
+    int QMPI_File_call_errhandler(MPI_File fh, int errorcode);
+
+/* ================== C Wrappers for MPI_File_close ================== */
+    int QMPI_File_close(MPI_File *fh);
+
+/* ================== C Wrappers for MPI_File_create_errhandler ================== */
+    int QMPI_File_create_errhandler(MPI_File_errhandler_function *function, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_File_delete ================== */
+    int QMPI_File_delete(const char *filename, MPI_Info info);
+
+/* ================== C Wrappers for MPI_File_get_amode ================== */
+    int QMPI_File_get_amode(MPI_File fh, int *amode);
+
+/* ================== C Wrappers for MPI_File_get_atomicity ================== */
+    int QMPI_File_get_atomicity(MPI_File fh, int *flag);
+
+/* ================== C Wrappers for MPI_File_get_byte_offset ================== */
+    int QMPI_File_get_byte_offset(MPI_File fh, MPI_Offset offset, MPI_Offset *disp);
+
+/* ================== C Wrappers for MPI_File_get_errhandler ================== */
+    int QMPI_File_get_errhandler(MPI_File file, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_File_get_group ================== */
+    int QMPI_File_get_group(MPI_File fh, MPI_Group *group);
+
+/* ================== C Wrappers for MPI_File_get_info ================== */
+    int QMPI_File_get_info(MPI_File fh, MPI_Info *info_used);
+
+/* ================== C Wrappers for MPI_File_get_position ================== */
+    int QMPI_File_get_position(MPI_File fh, MPI_Offset *offset);
+
+/* ================== C Wrappers for MPI_File_get_position_shared ================== */
+    int QMPI_File_get_position_shared(MPI_File fh, MPI_Offset *offset);
+
+/* ================== C Wrappers for MPI_File_get_size ================== */
+    int QMPI_File_get_size(MPI_File fh, MPI_Offset *size);
+
+/* ================== C Wrappers for MPI_File_get_type_extent ================== */
+    int QMPI_File_get_type_extent(MPI_File fh, MPI_Datatype datatype, MPI_Aint *extent);
+
+/* ================== C Wrappers for MPI_File_get_view ================== */
+    int QMPI_File_get_view(MPI_File fh, MPI_Offset *disp, MPI_Datatype *etype, MPI_Datatype *filetype, char *datarep);
+
+/* ================== C Wrappers for MPI_File_iread ================== */
+    int QMPI_File_iread(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iread_all ================== */
+    int QMPI_File_iread_all(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iread_at ================== */
+    int QMPI_File_iread_at(MPI_File fh, MPI_Offset offset, void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iread_at_all ================== */
+    int QMPI_File_iread_at_all(MPI_File fh, MPI_Offset offset, void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iread_shared ================== */
+    int QMPI_File_iread_shared(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iwrite ================== */
+    int QMPI_File_iwrite(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iwrite_all ================== */
+    int QMPI_File_iwrite_all(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iwrite_at ================== */
+    int QMPI_File_iwrite_at(MPI_File fh, MPI_Offset offset, const void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iwrite_at_all ================== */
+    int QMPI_File_iwrite_at_all(MPI_File fh, MPI_Offset offset, const void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_iwrite_shared ================== */
+    int QMPI_File_iwrite_shared(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_File_open ================== */
+    int QMPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info, MPI_File *fh);
+
+/* ================== C Wrappers for MPI_File_preallocate ================== */
+    int QMPI_File_preallocate(MPI_File fh, MPI_Offset size);
+
+/* ================== C Wrappers for MPI_File_read ================== */
+    int QMPI_File_read(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_all ================== */
+    int QMPI_File_read_all(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_all_begin ================== */
+    int QMPI_File_read_all_begin(MPI_File fh, void *buf, int count, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_File_read_all_end ================== */
+    int QMPI_File_read_all_end(MPI_File fh, void *buf, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_at ================== */
+    int QMPI_File_read_at(MPI_File fh, MPI_Offset offset, void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_at_all ================== */
+    int QMPI_File_read_at_all(MPI_File fh, MPI_Offset offset, void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_at_all_begin ================== */
+    int QMPI_File_read_at_all_begin(MPI_File fh, MPI_Offset offset, void *buf, int count, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_File_read_at_all_end ================== */
+    int QMPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_ordered ================== */
+    int QMPI_File_read_ordered(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_ordered_begin ================== */
+    int QMPI_File_read_ordered_begin(MPI_File fh, void *buf, int count, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_File_read_ordered_end ================== */
+    int QMPI_File_read_ordered_end(MPI_File fh, void *buf, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_read_shared ================== */
+    int QMPI_File_read_shared(MPI_File fh, void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_seek ================== */
+    int QMPI_File_seek(MPI_File fh, MPI_Offset offset, int whence);
+
+/* ================== C Wrappers for MPI_File_seek_shared ================== */
+    int QMPI_File_seek_shared(MPI_File fh, MPI_Offset offset, int whence);
+
+/* ================== C Wrappers for MPI_File_set_atomicity ================== */
+    int QMPI_File_set_atomicity(MPI_File fh, int flag);
+
+/* ================== C Wrappers for MPI_File_set_errhandler ================== */
+    int QMPI_File_set_errhandler(MPI_File file, MPI_Errhandler errhandler);
+
+/* ================== C Wrappers for MPI_File_set_info ================== */
+    int QMPI_File_set_info(MPI_File fh, MPI_Info info);
+
+/* ================== C Wrappers for MPI_File_set_size ================== */
+    int QMPI_File_set_size(MPI_File fh, MPI_Offset size);
+
+/* ================== C Wrappers for MPI_File_set_view ================== */
+    int QMPI_File_set_view(MPI_File fh, MPI_Offset disp, MPI_Datatype etype, MPI_Datatype filetype, const char *datarep, MPI_Info info);
+
+/* ================== C Wrappers for MPI_File_sync ================== */
+    int QMPI_File_sync(MPI_File fh);
+
+/* ================== C Wrappers for MPI_File_write ================== */
+    int QMPI_File_write(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_all ================== */
+    int QMPI_File_write_all(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_all_begin ================== */
+    int QMPI_File_write_all_begin(MPI_File fh, const void *buf, int count, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_File_write_all_end ================== */
+    int QMPI_File_write_all_end(MPI_File fh, const void *buf, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_at ================== */
+    int QMPI_File_write_at(MPI_File fh, MPI_Offset offset, const void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_at_all ================== */
+    int QMPI_File_write_at_all(MPI_File fh, MPI_Offset offset, const void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_at_all_begin ================== */
+    int QMPI_File_write_at_all_begin(MPI_File fh, MPI_Offset offset, const void *buf, int count, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_File_write_at_all_end ================== */
+    int QMPI_File_write_at_all_end(MPI_File fh, const void *buf, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_ordered ================== */
+    int QMPI_File_write_ordered(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_ordered_begin ================== */
+    int QMPI_File_write_ordered_begin(MPI_File fh, const void *buf, int count, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_File_write_ordered_end ================== */
+    int QMPI_File_write_ordered_end(MPI_File fh, const void *buf, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_File_write_shared ================== */
+    int QMPI_File_write_shared(MPI_File fh, const void *buf, int count, MPI_Datatype datatype, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Finalize ================== */
+    int QMPI_Finalize();
+
+/* ================== C Wrappers for MPI_Finalized ================== */
+    int QMPI_Finalized(int *flag);
+
+/* ================== C Wrappers for MPI_Free_mem ================== */
+    int QMPI_Free_mem(void *base);
+
+/* ================== C Wrappers for MPI_Gather ================== */
+    int QMPI_Gather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Gatherv ================== */
+    int QMPI_Gatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype recvtype, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Get ================== */
+    int QMPI_Get(void *origin_addr, int origin_count, MPI_Datatype origin_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Get_accumulate ================== */
+    int QMPI_Get_accumulate(const void *origin_addr, int origin_count, MPI_Datatype origin_datatype, void *result_addr, int result_count, MPI_Datatype result_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Op op, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Get_address ================== */
+    int QMPI_Get_address(const void *location, MPI_Aint *address);
+
+/* ================== C Wrappers for MPI_Get_count ================== */
+    int QMPI_Get_count(const MPI_Status *status, MPI_Datatype datatype, int *count);
+
+/* ================== C Wrappers for MPI_Get_elements ================== */
+    int QMPI_Get_elements(const MPI_Status *status, MPI_Datatype datatype, int *count);
+
+/* ================== C Wrappers for MPI_Get_elements_x ================== */
+    int QMPI_Get_elements_x(const MPI_Status *status, MPI_Datatype datatype, MPI_Count *count);
+
+/* ================== C Wrappers for MPI_Get_library_version ================== */
+    int QMPI_Get_library_version(char *version, int *resultlen);
+
+/* ================== C Wrappers for MPI_Get_processor_name ================== */
+    int QMPI_Get_processor_name(char *name, int *resultlen);
+
+/* ================== C Wrappers for MPI_Get_version ================== */
+    int QMPI_Get_version(int *version, int *subversion);
+
+/* ================== C Wrappers for MPI_Graph_create ================== */
+    int QMPI_Graph_create(MPI_Comm comm_old, int nnodes, const int index[], const int edges[], int reorder, MPI_Comm *comm_graph);
+
+/* ================== C Wrappers for MPI_Graph_get ================== */
+    int QMPI_Graph_get(MPI_Comm comm, int maxindex, int maxedges, int index[], int edges[]);
+
+/* ================== C Wrappers for MPI_Graph_map ================== */
+    int QMPI_Graph_map(MPI_Comm comm, int nnodes, const int index[], const int edges[], int *newrank);
+
+/* ================== C Wrappers for MPI_Graph_neighbors ================== */
+    int QMPI_Graph_neighbors(MPI_Comm comm, int rank, int maxneighbors, int neighbors[]);
+
+/* ================== C Wrappers for MPI_Graph_neighbors_count ================== */
+    int QMPI_Graph_neighbors_count(MPI_Comm comm, int rank, int *nneighbors);
+
+/* ================== C Wrappers for MPI_Graphdims_get ================== */
+    int QMPI_Graphdims_get(MPI_Comm comm, int *nnodes, int *nedges);
+
+/* ================== C Wrappers for MPI_Grequest_complete ================== */
+    int QMPI_Grequest_complete(MPI_Request request);
+
+/* ================== C Wrappers for MPI_Grequest_start ================== */
+    int QMPI_Grequest_start(MPI_Grequest_query_function *query_fn, MPI_Grequest_free_function *free_fn, MPI_Grequest_cancel_function *cancel_fn, void *extra_state, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Group_compare ================== */
+    int QMPI_Group_compare(MPI_Group group1, MPI_Group group2, int *result);
+
+/* ================== C Wrappers for MPI_Group_difference ================== */
+    int QMPI_Group_difference(MPI_Group group1, MPI_Group group2, MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Group_excl ================== */
+    int QMPI_Group_excl(MPI_Group group, int n, const int ranks[], MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Group_free ================== */
+    int QMPI_Group_free(MPI_Group *group);
+
+/* ================== C Wrappers for MPI_Group_incl ================== */
+    int QMPI_Group_incl(MPI_Group group, int n, const int ranks[], MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Group_intersection ================== */
+    int QMPI_Group_intersection(MPI_Group group1, MPI_Group group2, MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Group_range_excl ================== */
+    int QMPI_Group_range_excl(MPI_Group group, int n, int ranges[][3], MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Group_range_incl ================== */
+    int QMPI_Group_range_incl(MPI_Group group, int n, int ranges[][3], MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Group_rank ================== */
+    int QMPI_Group_rank(MPI_Group group, int *rank);
+
+/* ================== C Wrappers for MPI_Group_size ================== */
+    int QMPI_Group_size(MPI_Group group, int *size);
+
+/* ================== C Wrappers for MPI_Group_translate_ranks ================== */
+    int QMPI_Group_translate_ranks(MPI_Group group1, int n, const int ranks1[], MPI_Group group2, int ranks2[]);
+
+/* ================== C Wrappers for MPI_Group_union ================== */
+    int QMPI_Group_union(MPI_Group group1, MPI_Group group2, MPI_Group *newgroup);
+
+/* ================== C Wrappers for MPI_Iallgather ================== */
+    int QMPI_Iallgather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Iallgatherv ================== */
+    int QMPI_Iallgatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Iallreduce ================== */
+    int QMPI_Iallreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ialltoall ================== */
+    int QMPI_Ialltoall(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ialltoallv ================== */
+    int QMPI_Ialltoallv(const void *sendbuf, const int sendcounts[], const int sdispls[], MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int rdispls[], MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ialltoallw ================== */
+    int QMPI_Ialltoallw(const void *sendbuf, const int sendcounts[], const int sdispls[], const MPI_Datatype sendtypes[], void *recvbuf, const int recvcounts[], const int rdispls[], const MPI_Datatype recvtypes[], MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ibarrier ================== */
+    int QMPI_Ibarrier(MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ibcast ================== */
+    int QMPI_Ibcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ibsend ================== */
+    int QMPI_Ibsend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Iexscan ================== */
+    int QMPI_Iexscan(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Igather ================== */
+    int QMPI_Igather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Igatherv ================== */
+    int QMPI_Igatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Improbe ================== */
+    int QMPI_Improbe(int source, int tag, MPI_Comm comm, int *flag, MPI_Message *message, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Imrecv ================== */
+    int QMPI_Imrecv(void *buf, int count, MPI_Datatype type, MPI_Message *message, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ineighbor_allgather ================== */
+    int QMPI_Ineighbor_allgather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ineighbor_allgatherv ================== */
+    int QMPI_Ineighbor_allgatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ineighbor_alltoall ================== */
+    int QMPI_Ineighbor_alltoall(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ineighbor_alltoallv ================== */
+    int QMPI_Ineighbor_alltoallv(const void *sendbuf, const int sendcounts[], const int sdispls[], MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int rdispls[], MPI_Datatype recvtype, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ineighbor_alltoallw ================== */
+    int QMPI_Ineighbor_alltoallw(const void *sendbuf, const int sendcounts[], const MPI_Aint sdispls[], const MPI_Datatype sendtypes[], void *recvbuf, const int recvcounts[], const MPI_Aint rdispls[], const MPI_Datatype recvtypes[], MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Info_create ================== */
+    int QMPI_Info_create(MPI_Info *info); 
+
+/* ================== C Wrappers for MPI_Info_delete ================== */
+    int QMPI_Info_delete(MPI_Info info, const char *key);
+
+/* ================== C Wrappers for MPI_Info_dup ================== */
+    int QMPI_Info_dup(MPI_Info info, MPI_Info *newinfo);
+
+/* ================== C Wrappers for MPI_Info_free ================== */
+    int QMPI_Info_free(MPI_Info *info);
+
+/* ================== C Wrappers for MPI_Info_get ================== */
+    int QMPI_Info_get(MPI_Info info, const char *key, int valuelen, char *value, int *flag);
+
+/* ================== C Wrappers for MPI_Info_get_nkeys ================== */
+    int QMPI_Info_get_nkeys(MPI_Info info, int *nkeys);
+
+/* ================== C Wrappers for MPI_Info_get_nthkey ================== */
+    int QMPI_Info_get_nthkey(MPI_Info info, int n, char *key);
+
+/* ================== C Wrappers for MPI_Info_get_valuelen ================== */
+    int QMPI_Info_get_valuelen(MPI_Info info, const char *key, int *valuelen, int *flag);
+
+/* ================== C Wrappers for MPI_Info_set ================== */
+    int QMPI_Info_set(MPI_Info info, const char *key, const char *value);
+
+/* ================== C Wrappers for MPI_Init ================== */
+    int QMPI_Init(int *argc, char ***argv, int level ,struct dynamic_lib vec[]);//, std::map<std::string, void*> map);
+
+/* ================== C Wrappers for MPI_Init_thread ================== */
+    int QMPI_Init_thread(int *argc, char ***argv, int required, int *provided);
+
+/* ================== C Wrappers for MPI_Initialized ================== */
+    int QMPI_Initialized(int *flag);
+
+/* ================== C Wrappers for MPI_Intercomm_create ================== */
+    int QMPI_Intercomm_create(MPI_Comm local_comm, int local_leader, MPI_Comm bridge_comm, int remote_leader, int tag, MPI_Comm *newintercomm);
+
+/* ================== C Wrappers for MPI_Intercomm_merge ================== */
+    int QMPI_Intercomm_merge(MPI_Comm intercomm, int high, MPI_Comm *newintercomm);
+
+/* ================== C Wrappers for MPI_Iprobe ================== */
+    int QMPI_Iprobe(int source, int tag, MPI_Comm comm, int *flag, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Irecv ================== */
+    int QMPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ireduce ================== */
+    int QMPI_Ireduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ireduce_scatter ================== */
+    int QMPI_Ireduce_scatter(const void *sendbuf, void *recvbuf, const int recvcounts[], MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Ireduce_scatter_block ================== */
+    int QMPI_Ireduce_scatter_block(const void *sendbuf, void *recvbuf, int recvcount, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Irsend ================== */
+    int QMPI_Irsend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Is_thread_main ================== */
+    int QMPI_Is_thread_main(int *flag);
+
+/* ================== C Wrappers for MPI_Iscan ================== */
+    int QMPI_Iscan(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Iscatter ================== */
+    int QMPI_Iscatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Iscatterv ================== */
+    int QMPI_Iscatterv(const void *sendbuf, const int sendcounts[], const int displs[], MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm, MPI_Request *request);
+
+
+/* ================== C Wrappers for MPI_Isend ================== */
+    int QMPI_Isend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Issend ================== */
+    int QMPI_Issend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Keyval_create ================== */
+    int QMPI_Keyval_create(MPI_Copy_function *copy_fn, MPI_Delete_function *delete_fn, int *keyval, void *extra_state);
+
+/* ================== C Wrappers for MPI_Keyval_free ================== */
+    int QMPI_Keyval_free(int *keyval);
+
+/* ================== C Wrappers for MPI_Lookup_name ================== */
+    int QMPI_Lookup_name(const char *service_name, MPI_Info info, char *port_name);
+
+/* ================== C Wrappers for MPI_Mprobe ================== */
+    int QMPI_Mprobe(int source, int tag, MPI_Comm comm, MPI_Message *message, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Mrecv ================== */
+    int QMPI_Mrecv(void *buf, int count, MPI_Datatype type, MPI_Message *message, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Neighbor_allgather ================== */
+    int QMPI_Neighbor_allgather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Neighbor_allgatherv ================== */
+    int QMPI_Neighbor_allgatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int displs[], MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Neighbor_alltoall ================== */
+    int QMPI_Neighbor_alltoall(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Neighbor_alltoallv ================== */
+    int QMPI_Neighbor_alltoallv(const void *sendbuf, const int sendcounts[], const int sdispls[], MPI_Datatype sendtype, void *recvbuf, const int recvcounts[], const int rdispls[], MPI_Datatype recvtype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Neighbor_alltoallw ================== */
+    int QMPI_Neighbor_alltoallw(const void *sendbuf, const int sendcounts[], const MPI_Aint sdispls[], const MPI_Datatype sendtypes[], void *recvbuf, const int recvcounts[], const MPI_Aint rdispls[], const MPI_Datatype recvtypes[], MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Op_commutative ================== */
+    int QMPI_Op_commutative(MPI_Op op, int *commute);
+
+/* ================== C Wrappers for MPI_Op_create ================== */
+    int QMPI_Op_create(MPI_User_function *function, int commute, MPI_Op *op);
+
+/* ================== C Wrappers for MPI_Op_free ================== */
+    int QMPI_Op_free(MPI_Op *op);
+
+/* ================== C Wrappers for MPI_Open_port ================== */
+    int QMPI_Open_port(MPI_Info info, char *port_name);
+
+/* ================== C Wrappers for MPI_Pack ================== */
+    int QMPI_Pack(const void *inbuf, int incount, MPI_Datatype datatype, void *outbuf, int outsize, int *position, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Pack al ================== */
+    int QMPI_Pack_external(const char datarep[], const void *inbuf, int incount, MPI_Datatype datatype, void *outbuf, MPI_Aint outsize, MPI_Aint *position);
+
+/* ================== C Wrappers for MPI_Pack al_size ================== */
+    int QMPI_Pack_external_size(const char datarep[], int incount, MPI_Datatype datatype, MPI_Aint *size);
+
+
+/* ================== C Wrappers for MPI_Pack_size ================== */
+    int QMPI_Pack_size(int incount, MPI_Datatype datatype, MPI_Comm comm, int *size);
+
+/* ================== C Wrappers for MPI_Pcontrol ================== */
+    int QMPI_Pcontrol(const int level, ...);
+
+/* ================== C Wrappers for MPI_Probe ================== */
+    int QMPI_Probe(int source, int tag, MPI_Comm comm, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Publish_name ================== */
+    int QMPI_Publish_name(const char *service_name, MPI_Info info, const char *port_name);
+
+/* ================== C Wrappers for MPI_Put ================== */
+    int QMPI_Put(const void *origin_addr, int origin_count, MPI_Datatype origin_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Query_thread ================== */
+    int QMPI_Query_thread(int *provided);
+
+/* ================== C Wrappers for MPI_Raccumulate ================== */
+    int QMPI_Raccumulate(const void *origin_addr, int origin_count, MPI_Datatype origin_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Op op, MPI_Win win, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Recv_init ================== */
+    int QMPI_Recv_init(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Reduce ================== */
+    int QMPI_Reduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Reduce_local ================== */
+    int QMPI_Reduce_local(const void *inbuf, void *inoutbuf, int count, MPI_Datatype datatype, MPI_Op op);
+
+/* ================== C Wrappers for MPI_Reduce_scatter ================== */
+    int QMPI_Reduce_scatter(const void *sendbuf, void *recvbuf, const int recvcounts[], MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Reduce_scatter_block ================== */
+    int QMPI_Reduce_scatter_block(const void *sendbuf, void *recvbuf, int recvcount, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Register_datarep ================== */
+    int QMPI_Register_datarep(const char *datarep, MPI_Datarep_conversion_function *read_conversion_fn, MPI_Datarep_conversion_function *write_conversion_fn, MPI_Datarep_extent_function *dtype_file_extent_fn, void *extra_state);
+
+/* ================== C Wrappers for MPI_Request_free ================== */
+    int QMPI_Request_free(MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Request_get_status ================== */
+    int QMPI_Request_get_status(MPI_Request request, int *flag, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Rget ================== */
+    int QMPI_Rget(void *origin_addr, int origin_count, MPI_Datatype origin_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Win win, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Rget_accumulate ================== */
+    int QMPI_Rget_accumulate(const void *origin_addr, int origin_count, MPI_Datatype origin_datatype, void *result_addr, int result_count, MPI_Datatype result_datatype, int target_rank, MPI_Aint target_disp, int target_count, MPI_Datatype target_datatype, MPI_Op op, MPI_Win win, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Rput ================== */
+    int QMPI_Rput(const void *origin_addr, int origin_count, MPI_Datatype origin_datatype, int target_rank, MPI_Aint target_disp, int target_cout, MPI_Datatype target_datatype, MPI_Win win, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Rsend ================== */
+    int QMPI_Rsend(const void *ibuf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Rsend_init ================== */
+    int QMPI_Rsend_init(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Scan ================== */
+    int QMPI_Scan(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Scatter ================== */
+    int QMPI_Scatter(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Scatterv ================== */
+    int QMPI_Scatterv(const void *sendbuf, const int sendcounts[], const int displs[], MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Send_init ================== */
+    int QMPI_Send_init(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Sendrecv ================== */
+    int QMPI_Sendrecv(const void *sendbuf, int sendcount, MPI_Datatype sendtype, int dest, int sendtag, void *recvbuf, int recvcount, MPI_Datatype recvtype, int source, int recvtag, MPI_Comm comm, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Sendrecv_replace ================== */
+    int QMPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype, int dest, int sendtag, int source, int recvtag, MPI_Comm comm, MPI_Status *status);
+/* ================== C Wrappers for MPI_Ssend ================== */
+    int QMPI_Ssend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Ssend_init ================== */
+    int QMPI_Ssend_init(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Start ================== */
+    int QMPI_Start(MPI_Request *request);
+
+/* ================== C Wrappers for MPI_Startall ================== */
+    int QMPI_Startall(int count, MPI_Request array_of_requests[]);
+
+/* ================== C Wrappers for MPI_Status_set_cancelled ================== */
+    int QMPI_Status_set_cancelled(MPI_Status *status, int flag);
+
+/* ================== C Wrappers for MPI_Status_set_elements ================== */
+    int QMPI_Status_set_elements(MPI_Status *status, MPI_Datatype datatype, int count);
+
+/* ================== C Wrappers for MPI_Status_set_elements_x ================== */
+    int QMPI_Status_set_elements_x(MPI_Status *status, MPI_Datatype datatype, MPI_Count count);
+
+/* ================== C Wrappers for MPI_Test ================== */
+    int QMPI_Test(MPI_Request *request, int *flag, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Test_cancelled ================== */
+    int QMPI_Test_cancelled(const MPI_Status *status, int *flag);
+
+/* ================== C Wrappers for MPI_Testall ================== */
+    int QMPI_Testall(int count, MPI_Request array_of_requests[], int *flag, MPI_Status array_of_statuses[]);
+
+/* ================== C Wrappers for MPI_Testany ================== */
+    int QMPI_Testany(int count, MPI_Request array_of_requests[], int *index, int *flag, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Testsome ================== */
+    int QMPI_Testsome(int incount, MPI_Request array_of_requests[], int *outcount, int array_of_indices[], MPI_Status array_of_statuses[]);
+
+/* ================== C Wrappers for MPI_Topo_test ================== */
+    int QMPI_Topo_test(MPI_Comm comm, int *status);
+
+/* ================== C Wrappers for MPI_Type_commit ================== */
+    int QMPI_Type_commit(MPI_Datatype *type);
+
+/* ================== C Wrappers for MPI_Type_contiguous ================== */
+    int QMPI_Type_contiguous(int count, MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_darray ================== */
+    int QMPI_Type_create_darray(int size, int rank, int ndims, const int gsize_array[], const int distrib_array[], const int darg_array[], const int psize_array[], int order, MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_f90_complex ================== */
+    int QMPI_Type_create_f90_complex(int p, int r, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_f90_integer ================== */
+    int QMPI_Type_create_f90_integer(int r, MPI_Datatype *newtype);
+
+
+/* ================== C Wrappers for MPI_Type_create_f90_real ================== */
+    int QMPI_Type_create_f90_real(int p, int r, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_hindexed ================== */
+    int QMPI_Type_create_hindexed(int count, const int array_of_blocklengths[], const MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_hindexed_block ================== */
+    int QMPI_Type_create_hindexed_block(int count, int blocklength, const MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_hvector ================== */
+    int QMPI_Type_create_hvector(int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_indexed_block ================== */
+    int QMPI_Type_create_indexed_block(int count, int blocklength, const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_keyval ================== */
+    int QMPI_Type_create_keyval(MPI_Type_copy_attr_function *type_copy_attr_fn, MPI_Type_delete_attr_function *type_delete_attr_fn, int *type_keyval, void *extra_state);
+
+/* ================== C Wrappers for MPI_Type_create_resized ================== */
+    int QMPI_Type_create_resized(MPI_Datatype oldtype, MPI_Aint lb, MPI_Aint extent, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_struct ================== */
+    int QMPI_Type_create_struct(int count, const int array_of_block_lengths[], const MPI_Aint array_of_displacements[], const MPI_Datatype array_of_types[], MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_create_subarray ================== */
+    int QMPI_Type_create_subarray(int ndims, const int size_array[], const int subsize_array[], const int start_array[], int order, MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_delete_attr ================== */
+    int QMPI_Type_delete_attr(MPI_Datatype type, int type_keyval);
+
+/* ================== C Wrappers for MPI_Type_dup ================== */
+    int QMPI_Type_dup(MPI_Datatype type, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_extent ================== */
+    int QMPI_Type_extent(MPI_Datatype type, MPI_Aint *extent);
+
+/* ================== C Wrappers for MPI_Type_free ================== */
+    int QMPI_Type_free(MPI_Datatype *type);
+
+/* ================== C Wrappers for MPI_Type_free_keyval ================== */
+    int QMPI_Type_free_keyval(int *type_keyval);
+
+/* ================== C Wrappers for MPI_Type_get_attr ================== */
+    int QMPI_Type_get_attr(MPI_Datatype type, int type_keyval, void *attribute_val, int *flag);
+
+/* ================== C Wrappers for MPI_Type_get_contents ================== */
+    int QMPI_Type_get_contents(MPI_Datatype mtype, int max_integers, int max_addresses, int max_datatypes, int array_of_integers[], MPI_Aint array_of_addresses[], MPI_Datatype array_of_datatypes[]);
+
+/* ================== C Wrappers for MPI_Type_get_envelope ================== */
+    int QMPI_Type_get_envelope(MPI_Datatype type, int *num_integers, int *num_addresses, int *num_datatypes, int *combiner);
+
+/* ================== C Wrappers for MPI_Type_get_extent ================== */
+    int QMPI_Type_get_extent(MPI_Datatype type, MPI_Aint *lb, MPI_Aint *extent);
+
+
+/* ================== C Wrappers for MPI_Type_get_extent_x ================== */
+    int QMPI_Type_get_extent_x(MPI_Datatype type, MPI_Count *lb, MPI_Count *extent);
+
+
+/* ================== C Wrappers for MPI_Type_get_name ================== */
+    int QMPI_Type_get_name(MPI_Datatype type, char *type_name, int *resultlen);
+
+/* ================== C Wrappers for MPI_Type_get_true_extent ================== */
+    int QMPI_Type_get_true_extent(MPI_Datatype datatype, MPI_Aint *true_lb, MPI_Aint *true_extent);
+
+
+/* ================== C Wrappers for MPI_Type_get_true_extent_x ================== */
+    int QMPI_Type_get_true_extent_x(MPI_Datatype datatype, MPI_Count *true_lb, MPI_Count *true_extent);
+
+/* ================== C Wrappers for MPI_Type_hindexed ================== */
+    int QMPI_Type_hindexed(int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_hvector ================== */
+    int QMPI_Type_hvector(int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_indexed ================== */
+    int QMPI_Type_indexed(int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_lb ================== */
+    int QMPI_Type_lb(MPI_Datatype type, MPI_Aint *lb);
+
+/* ================== C Wrappers for MPI_Type_match_size ================== */
+    int QMPI_Type_match_size(int typeclass, int size, MPI_Datatype *type);
+
+/* ================== C Wrappers for MPI_Type_set_attr ================== */
+    int QMPI_Type_set_attr(MPI_Datatype type, int type_keyval, void *attr_val);
+
+/* ================== C Wrappers for MPI_Type_set_name ================== */
+    int QMPI_Type_set_name(MPI_Datatype type, const char *type_name);
+
+/* ================== C Wrappers for MPI_Type_size ================== */
+    int QMPI_Type_size(MPI_Datatype type, int *size);
+
+/* ================== C Wrappers for MPI_Type_size_x ================== */
+    int QMPI_Type_size_x(MPI_Datatype type, MPI_Count *size);
+
+/* ================== C Wrappers for MPI_Type_struct ================== */
+    int QMPI_Type_struct(int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Type_ub ================== */
+    int QMPI_Type_ub(MPI_Datatype mtype, MPI_Aint *ub);
+
+/* ================== C Wrappers for MPI_Type_vector ================== */
+    int QMPI_Type_vector(int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype);
+
+/* ================== C Wrappers for MPI_Unpack ================== */
+    int QMPI_Unpack(const void *inbuf, int insize, int *position, void *outbuf, int outcount, MPI_Datatype datatype, MPI_Comm comm);
+
+/* ================== C Wrappers for MPI_Unpack al ================== */
+    int QMPI_Unpack_external(const char datarep[], const void *inbuf, MPI_Aint insize, MPI_Aint *position, void *outbuf, int outcount, MPI_Datatype datatype);
+
+/* ================== C Wrappers for MPI_Unpublish_name ================== */
+    int QMPI_Unpublish_name(const char *service_name, MPI_Info info, const char *port_name);
+
+/* ================== C Wrappers for MPI_Wait ================== */
+    int QMPI_Wait(MPI_Request *request, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Waitall ================== */
+    int QMPI_Waitall(int count, MPI_Request array_of_requests[], MPI_Status *array_of_statuses);
+
+/* ================== C Wrappers for MPI_Waitany ================== */
+    int QMPI_Waitany(int count, MPI_Request array_of_requests[], int *index, MPI_Status *status);
+
+/* ================== C Wrappers for MPI_Waitsome ================== */
+    int QMPI_Waitsome(int incount, MPI_Request array_of_requests[], int *outcount, int array_of_indices[], MPI_Status array_of_statuses[]);
+
+/* ================== C Wrappers for MPI_Win_allocate ================== */
+    int QMPI_Win_allocate(MPI_Aint size, int disp_unit, MPI_Info info, MPI_Comm comm, void *baseptr, MPI_Win *win);
+
+/* ================== C Wrappers for MPI_Win_allocate_shared ================== */
+    int QMPI_Win_allocate_shared(MPI_Aint size, int disp_unit, MPI_Info info, MPI_Comm comm, void *baseptr, MPI_Win *win);
+
+/* ================== C Wrappers for MPI_Win_attach ================== */
+    int QMPI_Win_attach(MPI_Win win, void *base, MPI_Aint size);
+
+/* ================== C Wrappers for MPI_Win_call_errhandler ================== */
+    int QMPI_Win_call_errhandler(MPI_Win win, int errorcode);
+
+/* ================== C Wrappers for MPI_Win_complete ================== */
+    int QMPI_Win_complete(MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_create ================== */
+    int QMPI_Win_create(void *base, MPI_Aint size, int disp_unit, MPI_Info info, MPI_Comm comm, MPI_Win *win);
+
+/* ================== C Wrappers for MPI_Win_create_dynamic ================== */
+    int QMPI_Win_create_dynamic(MPI_Info info, MPI_Comm comm, MPI_Win *win);
+
+/* ================== C Wrappers for MPI_Win_create_errhandler ================== */
+    int QMPI_Win_create_errhandler(MPI_Win_errhandler_function *function, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_Win_create_keyval ================== */
+    int QMPI_Win_create_keyval(MPI_Win_copy_attr_function *win_copy_attr_fn, MPI_Win_delete_attr_function *win_delete_attr_fn, int *win_keyval, void *extra_state);
+
+/* ================== C Wrappers for MPI_Win_delete_attr ================== */
+    int QMPI_Win_delete_attr(MPI_Win win, int win_keyval);
+
+/* ================== C Wrappers for MPI_Win_detach ================== */
+    int QMPI_Win_detach(MPI_Win win, const void *base);
+
+/* ================== C Wrappers for MPI_Win_fence ================== */
+    int QMPI_Win_fence(int assert, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_flush ================== */
+    int QMPI_Win_flush(int rank, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_flush_all ================== */
+    int QMPI_Win_flush_all(MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_flush_local ================== */
+    int QMPI_Win_flush_local(int rank, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_flush_local_all ================== */
+    int QMPI_Win_flush_local_all(MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_free ================== */
+    int QMPI_Win_free(MPI_Win *win);
+
+/* ================== C Wrappers for MPI_Win_free_keyval ================== */
+    int QMPI_Win_free_keyval(int *win_keyval);
+
+/* ================== C Wrappers for MPI_Win_get_attr ================== */
+    int QMPI_Win_get_attr(MPI_Win win, int win_keyval, void *attribute_val, int *flag);
+
+/* ================== C Wrappers for MPI_Win_get_errhandler ================== */
+    int QMPI_Win_get_errhandler(MPI_Win win, MPI_Errhandler *errhandler);
+
+/* ================== C Wrappers for MPI_Win_get_group ================== */
+    int QMPI_Win_get_group(MPI_Win win, MPI_Group *group);
+
+/* ================== C Wrappers for MPI_Win_get_info ================== */
+    int QMPI_Win_get_info(MPI_Win win, MPI_Info *info_used);
+
+/* ================== C Wrappers for MPI_Win_get_name ================== */
+    int QMPI_Win_get_name(MPI_Win win, char *win_name, int *resultlen);
+
+/* ================== C Wrappers for MPI_Win_lock ================== */
+    int QMPI_Win_lock(int lock_type, int rank, int assert, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_lock_all ================== */
+    int QMPI_Win_lock_all(int assert, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_post ================== */
+    int QMPI_Win_post(MPI_Group group, int assert, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_set_attr ================== */
+    int QMPI_Win_set_attr(MPI_Win win, int win_keyval, void *attribute_val);
+
+/* ================== C Wrappers for MPI_Win_set_errhandler ================== */
+    int QMPI_Win_set_errhandler(MPI_Win win, MPI_Errhandler errhandler);
+
+/* ================== C Wrappers for MPI_Win_set_info ================== */
+    int QMPI_Win_set_info(MPI_Win win, MPI_Info info);
+
+/* ================== C Wrappers for MPI_Win_set_name ================== */
+    int QMPI_Win_set_name(MPI_Win win, const char *win_name);
+
+/* ================== C Wrappers for MPI_Win_shared_query ================== */
+    int QMPI_Win_shared_query(MPI_Win win, int rank, MPI_Aint *size, int *disp_unit, void *baseptr);
+
+/* ================== C Wrappers for MPI_Win_start ================== */
+    int QMPI_Win_start(MPI_Group group, int assert, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_sync ================== */
+    int QMPI_Win_sync(MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_test ================== */
+    int QMPI_Win_test(MPI_Win win, int *flag);
+
+/* ================== C Wrappers for MPI_Win_unlock ================== */
+    int QMPI_Win_unlock(int rank, MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_unlock_all ================== */
+    int QMPI_Win_unlock_all(MPI_Win win);
+
+/* ================== C Wrappers for MPI_Win_wait ================== */
+    int QMPI_Win_wait(MPI_Win win);
+
+/* ================== C Wrappers for MPI_Wtick ================== */
+    double QMPI_Wtick();
+
