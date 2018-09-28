@@ -1,0 +1,4 @@
+
+checkOutput "1-hot-potato.c +47 \.?main +Recv" "Source check:"
+checkOutput "1-hot-potato.c +40 \.?main +Send" "Source check:"
+

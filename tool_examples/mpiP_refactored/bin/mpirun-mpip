@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+#  mpirun-mpip
+#
+#  Chris Chambreau LLNL 1/6/05
+#
+#  If the application has been linked against an SO MPI library and 
+#  SO versions of libmpiP, libbfd, and libiberty are available, this
+#  script should preload libmpiP such that MPI routines are profiled
+#  and an mpiP report is generated.
+#
+#  This script is a wrapper for mpirun.  The use of "mpirun" to run a
+#  parallel job can be replaced with "mpirun-mpip".  
+#
+#  You may need to preload other objects based on your MPI implementation
+#  and compiler.
+
+
+MPIP_DIR=/home/chcham/workspace/mpiP
+
+export LD_PRELOAD=/usr/lib/libbfd.so:/usr/lib/libunwind.so:/lib/i386-linux-gnu/libz.so.1:${MPIP_DIR}/lib/libmpiP.so
+
+mpirun "$@"
+
+exit $?

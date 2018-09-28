@@ -1,0 +1,3 @@
+
+checkOutput "unknown|12-null-null" "Source check:"
+
