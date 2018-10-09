@@ -18,7 +18,7 @@ build:
     - cd ..
   artifacts:
     paths:
-      - src/qmpilib.a
+      - ./src/qmpilib.a
       - main
-      - tools_examples/very_simple_tool.so
-      - tools_examples/mpiP_refactored/libmpiP.so
+      - ./tools_examples/very_simple_tool.so
+      - ./tools_examples/mpiP_refactored/libmpiP.so
