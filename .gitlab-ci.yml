@@ -13,6 +13,7 @@ build:
   script: 
     - make
     - cd tool_examples
+    - export LOGNAME="root"
     - make
     - cd ..
   artifacts:
