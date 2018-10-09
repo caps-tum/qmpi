@@ -11,9 +11,6 @@ build:
   before_script: 
     - apt update && apt -y install make libopenmpi-dev git
   script: 
-    - cd src
-    - make
-    - cd ..
     - make
     - cd tool_examples
     - make
