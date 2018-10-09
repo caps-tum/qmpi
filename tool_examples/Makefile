@@ -5,7 +5,7 @@ ODIR = ./
 
 
 ./very_simple_tool.so: ./very_simple_tool.c
-	$(CC) $(CFLAGS) -o $@  $^ ../src/qmpi.c
+	$(CC) $(CFLAGS) -o $@  $^ ../libqmpi/qmpi.c
 	cd ./mpiP_refactored && make clean && make shared && cd ..
 
 clean:

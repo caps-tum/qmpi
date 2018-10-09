@@ -144,7 +144,7 @@ clean::
 
 ${SHARED_C_TARGET}: CFLAGS += -fpic -DPIC
 ${SHARED_C_TARGET}: cleanobjs ${OBJS}
-	${CC} -fPIC -rdynamic -shared -o $@ ${OBJS} ${LDFLAGS} ${LIBS} ../../src/obj/qmpi.c
+	${CC} -fPIC -rdynamic -shared -o $@ ${OBJS} ${LDFLAGS} ${LIBS} ../../libqmpi/obj/qmpi.c
 
 endif
 

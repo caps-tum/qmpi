@@ -25,7 +25,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-#include "../../src/qmpi.h"
+#include "../../libqmpi/qmpi.h"
 #include "mpiPconfig.h"
 
 #ifdef ENABLE_BFD
