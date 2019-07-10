@@ -11,14 +11,16 @@ build:
   before_script: 
     - apt update && apt -y install make libopenmpi-dev git python
   script: 
+    - cd sample
     - make
-    - cd tool_examples
+    - make
+    - cd tool_examples/mpiP_refactored
     - export LOGNAME="root"
     - make
-    - cd ..
+    - cd tool_examples/very_simple_tool
   artifacts:
     paths:
-      - ./src/qmpilib.a
-      - main
-      - ./tools_examples/very_simple_tool.so
+      - ./sample/main
+      - ./qmpilib.a
+      - ./tools_examples/very_simple_tool/very_simple_tool.so
       - ./tools_examples/mpiP_refactored/libmpiP.so
