@@ -13,11 +13,11 @@ build:
   script: 
     - cd sample
     - make
-    - make
     - cd tool_examples/mpiP_refactored
     - export LOGNAME="root"
     - make
     - cd tool_examples/very_simple_tool
+    - make
   artifacts:
     paths:
       - ./sample/main
