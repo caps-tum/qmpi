@@ -142,9 +142,9 @@ install::
 clean::
 	rm -f ${SHARED_C_TARGET}
 
-${SHARED_C_TARGET}: CFLAGS += -fpic -DPIC -std=c99
+${SHARED_C_TARGET}: CFLAGS += -fpic -DPIC -std=c99 -I../../
 ${SHARED_C_TARGET}: cleanobjs ${OBJS}
-	${CC} -fPIC -rdynamic -shared -std=c99 -o $@ ${OBJS} ${LDFLAGS} ${LIBS} ../../libqmpi/qmpi.c
+	${CC} -fPIC -rdynamic -shared -std=c99 -o $@ ${OBJS} ${LDFLAGS} ${LIBS} -I../../
 
 endif
 

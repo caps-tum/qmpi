@@ -32,7 +32,7 @@ extern ssize_t readlink(const char *restrict a, char *restrict b, size_t c);
 
 static int argc = 0;
 static char **argv = NULL;
-
+/*
 static 
 char *
 strdup (const char *s)
@@ -43,6 +43,7 @@ strdup (const char *s)
     return NULL;
   return (char *) memcpy (new, s, len);
 }
+*/
 
 char *
 GetBaseAppName (char *rawName)//,int i ,vector* v)

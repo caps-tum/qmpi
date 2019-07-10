@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../libqmpi/qmpi.h"
+#include "qmpi.h"
 
 #ifndef _EXTERN_C_
 #ifdef __cplusplus

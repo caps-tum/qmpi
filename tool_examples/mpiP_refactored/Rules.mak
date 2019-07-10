@@ -3,7 +3,7 @@
 # $Id$
 
 .c.o:
-	${CC} ${CFLAGS} ${CPPFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} ${CPPFLAGS} -I../../ -c $< -o $@
 
 .f.o:
 	${FC} ${CFLAGS} -c $< -o $@

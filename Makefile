@@ -1,25 +1,18 @@
-CC=mpicc
-CFLAGS=-L./libqmpi -std=c99 -W -Wall  -Werror
-ODIR=./
-
-LIBS= -lqmpi -ldl 
-
-DEPS =libqmpi
-
-_OBJ = main.o  
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
+CC= mpicc
+CFLAGS=  -std=c99 -g
+OBJ = qmpi.o
+ARFLAGS = rsv
+ODIR = .
 
 
-$(ODIR)/%.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@  -c $^
 
-main: $(OBJ)
-	cd libqmpi && make 
-	$(CC) -g -o $@  $^ $(CFLAGS) $(LIBS)
 
-.PHONY: clean
+libqmpi.a: $(OBJ)
+	ar $(ARFLAGS) $@ $^
+	ar -t $@
+
 clean:
-	(cd libqmpi && make clean)
-	rm -f ./*.o  
+	rm -f $(ODIR)/*.o $(ODIR)/*.a *~ core $(INCDIR)/*~
 	rm -rf *.dSYM/ main
-

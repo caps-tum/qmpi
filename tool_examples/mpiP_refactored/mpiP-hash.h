@@ -14,7 +14,7 @@
 
 #ifndef _HASH_H
 #define _HASH_H
-#include "../../libqmpi/qmpi.h"
+#include "qmpi.h"
 
 typedef int (*h_HashFunct) (const void *,int qmpi_lvl,vector* v);
 typedef int (*h_Comparator) (const void *, const void *,int qmpi_lvl,vector* v);

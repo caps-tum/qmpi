@@ -18,7 +18,7 @@ static char *svnid =
 #include "mpiPconfig.h"
 #include "mpiPi.h"
 #include "symbols.h"
-#include "../../libqmpi/qmpi.h"
+#include "qmpi.h"
 #ifdef ENABLE_FORTRAN_WEAK_SYMS
 #include "weak-symbols-special.h"
 #endif

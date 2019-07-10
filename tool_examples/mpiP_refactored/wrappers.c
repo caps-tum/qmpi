@@ -8,7 +8,7 @@
 #include "mpiPi.h"
 #include "symbols.h"
 #include "mpiPi_def.h"
-#include "../../libqmpi/qmpi.h"
+#include "qmpi.h"
 #include "array.h"
 
 

@@ -19,6 +19,7 @@ static char *svnid = "$Id$";
 #include <unistd.h>
 #include "mpiPi.h"
 
+/*
 static 
 char *strdup (const char *s)
 {
@@ -28,7 +29,7 @@ char *strdup (const char *s)
     return NULL;
   return (char *) memcpy (new, s, len);
 }
-
+*/
 static int
 mpiPi_callsite_stats_pc_hashkey (const void *p,int qmpi_lvl,vector* v)
 {
