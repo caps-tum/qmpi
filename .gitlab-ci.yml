@@ -16,6 +16,7 @@ build:
     - cd tool_examples/mpiP_refactored
     - export LOGNAME="root"
     - make
+    - cd ../../
     - cd tool_examples/very_simple_tool
     - make
   artifacts:
