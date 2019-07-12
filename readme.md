@@ -51,7 +51,7 @@ cd very_simple_tool
 make
 ```
 ## Execution
-To test the existing tools, one must allow QMPI to load a given tool via environment variable.
+To test the existing tools, one must allow QMPI to load a given tool via environment variable "TOOLS". Assignment of the TOOLS variable must be made so that tool paths are seperated by a colon character. The ordering of the paths of the tools will also determine the ordering of the tools in the tool-chain.
 Example:
 ```
 export TOOLS=<path_to_qmpi_directory>/tool_examples/very_simple_tool/very_simple_tool.so:<path_to_qmpi_directory>/tool_examples/mpiP_refactored/libmpiP.so
