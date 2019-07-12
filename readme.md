@@ -61,6 +61,8 @@ export TOOLS=<path_to_qmpi_directory>/tool_examples/very_simple_tool/very_simple
 QMPI allows multiple execution of the same tool file in a single tool-chain. In order to achieve this the path to the tool file should be added to the TOOLS environment varible multiple times as if one would add different tool paths. To make sure your tool supports context seperation feature there are extra requirements that must be satisfied by the tools.
 
 ### Tool Design for Context Seperation
+The tool must declare and initialize a data structure that includes all of the global variables that affect the computations and output of the tool. By using "QMPI_Set_context" QMPI is enabled to allocate a memory and store the initialized data. This data can be reached via the void pointer returned by "QMPI_Get_context" function.
+The refactored mpiP tool is an example of QMPI compatible tool with support of context seperation 
 
 ## Limitations
 - Currently only support shared object (.so) based dynamic library tools
