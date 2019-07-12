@@ -50,11 +50,11 @@ cd tools_example
 cd very_simple_tool
 make
 ```
-## Exection
+## Execution
 To test the existing tools, one must allow QMPI to load a given tool via environment variable.
 Example:
 ```
-t.b.d.
+export TOOLS=<path_to_qmpi_directory>/tool_examples/very_simple_tool/very_simple_tool.so:<path_to_qmpi_directory>/tool_examples/mpiP_refactored/libmpiP.so
 ```
 
 ## Limitations
