@@ -57,6 +57,11 @@ Example:
 export TOOLS=<path_to_qmpi_directory>/tool_examples/very_simple_tool/very_simple_tool.so:<path_to_qmpi_directory>/tool_examples/mpiP_refactored/libmpiP.so
 ```
 
+## Context Seperation
+QMPI allows multiple execution of the same tool file in a single tool-chain. In order to achieve this the path to the tool file should be added to the TOOLS environment varible multiple times as if one would add different tool paths. To make sure your tool supports context seperation feature there are extra requirements that must be satisfied by the tools.
+
+### Tool Design for Context Seperation
+
 ## Limitations
 - Currently only support shared object (.so) based dynamic library tools
 - Only supports linux system (and macOS), Windows is not supported. 
