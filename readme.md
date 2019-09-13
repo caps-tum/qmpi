@@ -77,9 +77,10 @@ You should consult the LICENSE file for further information.
 (C) 2019 Technical University of Munich, Chair of Computer Architecture and Parallel Systems. 
 
 
-## Citation
+## Publications
 Any academic work published with the content of this repository must cite the following paper as reference: 
-- Bengisu Elis, Dai Yang and Martin Schulz. QMPI: A Next Generation MPI Profiling Interface for Modern HPC Platforms. EuroMPI '19: Proceedings of the 26th European MPI Users' Groups Meeting. ACM, New York, NY, USA. 2019. Accepted for Publication.
+- Bengisu Elis, Dai Yang, and Martin Schulz. 2019. QMPI: a next generation MPI profiling interface for modern HPC platforms. In Proceedings of the 26th European MPI Users' Group Meeting (EuroMPI '19), Torsten Hoefler and Jesper Larsson Träff (Eds.). ACM, New York, NY, USA, Article 4, 10 pages. DOI: https://doi.org/10.1145/3343211.3343215
+
 
 
 ## Disclaimer
