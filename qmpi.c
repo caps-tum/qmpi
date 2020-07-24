@@ -4927,14 +4927,16 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
     	va_start (argp,v);
 		typedef double  (*wtick_func)  (int level,  vector* v);
 		wtick_func QMPI_Wtick_ptr =  (wtick_func) func_ptr;
-		ret =  (QMPI_Wtick_ptr)  ( level, v);
+		double ret_Wtick =  (QMPI_Wtick_ptr)  ( level, v);
+		return ret_Wtick;
 		break;
     //double QMPI_Wtick ( int level,  vector* v);
     case 359:
     	va_start (argp,v);
 		typedef double  (*wtime_func)  (int level,  vector* v);
 		wtime_func QMPI_Wtime_ptr =  (wtime_func) func_ptr;
-		ret =  (QMPI_Wtime_ptr)  ( level, v);
+		double ret_Wtime =  (QMPI_Wtime_ptr)  ( level, v);
+		return ret_Wtime;
 		break;
     //double QMPI_Wtime ( int level,  vector* v);    
 
@@ -10067,10 +10069,10 @@ _EXTERN_C_ double MPI_Wtick () {
   void* f_dl=NULL;
   QMPI_TABLE_QUERY (_MPI_Wtick,&f_dl, (*VECTOR_GET (&v, 0)).table );
   //int ret=EXEC_FUNC (f_dl,0,_MPI_Wtick,&v);
-  //
+  
   int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Wtick, &v);
   typedef double (*_wtick_func) ( int level,  vector* v);
-  int ret= ((_wtick_func)f_dl) (new_level, &v);
+  double ret= ((_wtick_func)f_dl) (new_level, &v);
   return ret;
 }
 /* ================== C Wrappers for MPI_Wtime ================== */
@@ -10081,10 +10083,10 @@ _EXTERN_C_ double MPI_Wtime () {
   void* f_dl=NULL;
   QMPI_TABLE_QUERY (_MPI_Wtime,&f_dl, (*VECTOR_GET (&v, 0)).table );
   //int ret=EXEC_FUNC (f_dl,0,_MPI_Wtime,&v);
-  //
+  
   int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Wtime, &v);
   typedef double (*_wtime_func) (int level,  vector* v); 
-  int ret= ((_wtime_func) f_dl) (new_level, &v);
+  double ret= ((_wtime_func) f_dl) (new_level, &v);
   return ret;
 }
 
