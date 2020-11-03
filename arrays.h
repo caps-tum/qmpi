@@ -254,7 +254,7 @@ void* PMPI_Array[]={
    ,    &PMPI_Type_get_true_extent,    &PMPI_Type_get_true_extent_x/*,       &PMPI_Type_hindexed*/
    /*,    &PMPI_Type_hvector*/,            &PMPI_Type_indexed,                 &PMPI_Type_lb
    ,    &PMPI_Type_match_size,         &PMPI_Type_set_attr,                &PMPI_Type_set_name
-   ,    &PMPI_Type_size,               &PMPI_Type_size_x/*,                  &PMPI_Type_struct*/
+   ,    &PMPI_Type_size,               &PMPI_Type_size_x/*,                  &PMPI_Type_struct */
    ,    &PMPI_Type_ub,                 &PMPI_Type_vector,                  &PMPI_Unpack
    ,    &PMPI_Unpack_external,         &PMPI_Unpublish_name,               &PMPI_Wait
    ,    &PMPI_Waitall,                 &PMPI_Waitany,                      &PMPI_Waitsome
