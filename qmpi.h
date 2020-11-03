@@ -453,7 +453,7 @@ void    		get_tool_interceptions  ( struct dynamic_lib* l );
 int 			QMPI_Table_query	    (_MPI_funcs func_index, void** func_ptr, cell table[]);
 int 			MPI_Table_query		    (_MPI_funcs func_index, void** func_ptr,  cell table[]);
 int 			split 			        (char* paths, int next);
-int             init_qmpi_struct        (void)
+int             init_qmpi_struct        (void);
 
 /* ================== C Wrappers for MPI_Send ================== */
     int QMPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, int level ,vector* v);
