@@ -14,8 +14,9 @@ Dai Yang <d.yang@tum.de>
 - C compiler and MPICC compiler
 
 ## Notes
-- Master branch is compatible with MPI version 3 and requires some MPI funcitons which are removed in MPI version 4
-- The for MPI version 4 MPI-v4-development branch is under development and unstable at the moment.
+- Master branch is compatible with both MPI version 4 and 3. However some funcitons removed when going from MPI 3 to 4 are not supported.
+- The MPI-v3 branch is compatible with MPI version 3.
+- The development is carried out only with the MPI 4 compatible version on the development branch. Therefore doesn't support the functions that are removed in MPI 4. 
 
 ## Building with Makefile
 
