@@ -24,7 +24,7 @@
 void* QMPI_Array[]={  
   
         &QMPI_Abort,                   &QMPI_Accumulate,                   &QMPI_Add_error_class
-   ,    &QMPI_Add_error_code,          &QMPI_Add_error_string,             &QMPI_Get_address
+   ,    &QMPI_Add_error_code,          &QMPI_Add_error_string/*,             &QMPI_Address*/
    ,    &QMPI_Allgather,               &QMPI_Allgatherv,                   &QMPI_Alloc_mem
    ,    &QMPI_Allreduce,               &QMPI_Alltoall   ,                  &QMPI_Alltoallv
    ,    &QMPI_Alltoallw,               &QMPI_Attr_delete,                  &QMPI_Attr_get
@@ -152,7 +152,7 @@ void* QMPI_Array[]={
 void* PMPI_Array[]={  
   
         &PMPI_Abort,                   &PMPI_Accumulate,                   &PMPI_Add_error_class
-   ,    &PMPI_Add_error_code,          &PMPI_Add_error_string,             &PMPI_Get_address
+   ,    &PMPI_Add_error_code,          &PMPI_Add_error_string/*,             &PMPI_Address*/
    ,    &PMPI_Allgather,               &PMPI_Allgatherv,                   &PMPI_Alloc_mem
    ,    &PMPI_Allreduce,               &PMPI_Alltoall   ,                  &PMPI_Alltoallv
    ,    &PMPI_Alltoallw,               &PMPI_Attr_delete,                  &PMPI_Attr_get

@@ -285,7 +285,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		ret=  (add_error_string_ptr)  (add_error_string_arg1,add_error_string_arg2, level ,v);
 		break;
 	case 5	:	    
-		//int QMPI_Get_address (void *location, MPI_Aint *address, int level ,vector* v);
+		//int QMPI_Address (void *location, MPI_Aint *address, int level ,vector* v);
 		va_start (argp,v);
 		typedef int  (*address_func)  (void *location, MPI_Aint *address, int level ,vector* v);
 		address_func address_ptr	=	 (address_func) func_ptr;
@@ -5128,20 +5128,20 @@ _EXTERN_C_ int MPI_Add_error_string (int errorcode, const char *string) {
    int ret= ( (_add_error_string_func) f_dl) (errorcode, string, new_level, &v);
    return ret;
 }
-/* ================== C Wrappers for MPI_Get_address ================== 5*/
-_EXTERN_C_ int QMPI_Get_address (void *location, MPI_Aint *address, int level,  vector* v){
-	return PMPI_Get_address (location, address);
+/* ================== C Wrappers for MPI_Address ================== 5*/
+/*_EXTERN_C_ int QMPI_Address (void *location, MPI_Aint *address, int level,  vector* v){
+	return PMPI_Address (location, address);
 }
-_EXTERN_C_ int MPI_Get_address (void *location, MPI_Aint *address) { 
+_EXTERN_C_ int MPI_Address (void *location, MPI_Aint *address) { 
   void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Get_address,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Get_address,&v,location, address);
+  QMPI_TABLE_QUERY (_MPI_Address,&f_dl, (*VECTOR_GET (&v, 0)).table );
+  //int ret=EXEC_FUNC (f_dl,0,_MPI_Address,&v,location, address);
   //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Get_address, &v);
+  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Address, &v);
   typedef int (*_address_func)  (void *location, MPI_Aint *address, int level ,vector* v);
   int ret= ( (_address_func) f_dl) (location, address, new_level, &v);
   return ret;
-}
+}*/
 /* ================== C Wrappers for MPI_Allgather ================== 6*/
 _EXTERN_C_ int QMPI_Allgather (const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, int level,  vector* v){
 	return PMPI_Allgather (sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm);
@@ -7096,7 +7096,7 @@ _EXTERN_C_ int MPI_Get_accumulate (const void *origin_addr, int origin_count, MP
   int ret= ( (_get_accumulate_func) f_dl) (origin_addr, origin_count, origin_datatype, result_addr, result_count, result_datatype, target_rank, target_disp, target_count, target_datatype, op, win, new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Get_address ================== */
+/* ================== C Wrappers for MPI_Get_address ================== 145*/
 _EXTERN_C_ int QMPI_Get_address (const void *location, MPI_Aint *address, int level,  vector* v){
   return PMPI_Get_address ( location, address);
 }
