@@ -46,7 +46,7 @@ void* QMPI_Array[]={
    ,    &QMPI_Comm_set_name,           &QMPI_Comm_size,                    &QMPI_Comm_split
    ,    &QMPI_Comm_split_type,         &QMPI_Comm_test_inter,              &QMPI_Compare_and_swap
    ,    &QMPI_Dims_create,             &QMPI_Dist_graph_create,            &QMPI_Dist_graph_create_adjacent
-   ,    &QMPI_Dist_graph_neighbors,    &QMPI_Dist_graph_neighbors_count,   &QMPI_Errhandler_create
+   ,    &QMPI_Dist_graph_neighbors,    &QMPI_Dist_graph_neighbors_count/*,   &QMPI_Errhandler_create*/
    ,    &QMPI_Errhandler_free,         &QMPI_Errhandler_get,               &QMPI_Errhandler_set
    ,    &QMPI_Error_class,             &QMPI_Error_string,                 &QMPI_Exscan
    ,    &QMPI_Fetch_and_op,            &QMPI_File_call_errhandler,         &QMPI_File_close
@@ -174,7 +174,7 @@ void* PMPI_Array[]={
    ,    &PMPI_Comm_set_name,           &PMPI_Comm_size,                    &PMPI_Comm_split
    ,    &PMPI_Comm_split_type,         &PMPI_Comm_test_inter,              &PMPI_Compare_and_swap
    ,    &PMPI_Dims_create,             &PMPI_Dist_graph_create,            &PMPI_Dist_graph_create_adjacent
-   ,    &PMPI_Dist_graph_neighbors,    &PMPI_Dist_graph_neighbors_count,   &PMPI_Errhandler_create
+   ,    &PMPI_Dist_graph_neighbors,    &PMPI_Dist_graph_neighbors_count/*,   &PMPI_Errhandler_create*/
    ,    &PMPI_Errhandler_free,         &PMPI_Errhandler_get,               &PMPI_Errhandler_set
    ,    &PMPI_Error_class,             &PMPI_Error_string,                 &PMPI_Exscan
    ,    &PMPI_Fetch_and_op,            &PMPI_File_call_errhandler,         &PMPI_File_close

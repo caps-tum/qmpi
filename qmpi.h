@@ -113,7 +113,7 @@ _MPI_Dist_graph_create	 =	67	,
 _MPI_Dist_graph_create_adjacent	 =	68	,
 _MPI_Dist_graph_neighbors	 =	69	,
 _MPI_Dist_graph_neighbors_count	 =	70	,
-_MPI_Errhandler_create	 =	71	,
+//_MPI_Errhandler_create	 =	71	,
 _MPI_Errhandler_free	 =	72	,
 _MPI_Errhandler_get	 =	73	,
 _MPI_Errhandler_set	 =	74	,
@@ -674,7 +674,7 @@ int             init_qmpi_struct        (void);
     int QMPI_Dist_graph_neighbors_count(MPI_Comm comm, int *inneighbors, int *outneighbors, int *weighted, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Errhandler_create ================== */
-    int QMPI_Errhandler_create(MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v);
+ //   int QMPI_Errhandler_create(MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Errhandler_free ================== */
     int QMPI_Errhandler_free(MPI_Errhandler *errhandler, int level,  vector* v);

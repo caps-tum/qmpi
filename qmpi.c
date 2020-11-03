@@ -284,7 +284,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		const char* add_error_string_arg2		   = va_arg (argp, const char*);
 		ret=  (add_error_string_ptr)  (add_error_string_arg1,add_error_string_arg2, level ,v);
 		break;
-	case 5	:	    
+	/*case 5	:	    
 		//int QMPI_Address (void *location, MPI_Aint *address, int level ,vector* v);
 		va_start (argp,v);
 		typedef int  (*address_func)  (void *location, MPI_Aint *address, int level ,vector* v);
@@ -293,6 +293,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		MPI_Aint* address_arg2		=	va_arg (argp, MPI_Aint*);
 		ret=  (address_ptr)  (address_arg1, address_arg2, level, v);
 		break;
+	*/
 	case 6	:	    
 		//int QMPI_Allgather (const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, int level ,vector* v);
 		va_start (argp,v);
@@ -1111,7 +1112,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Dist_graph_neighbors_count (MPI_Comm comm, int *inneighbors, int *outneighbors, int *weighted, int level, vector *v);\n
      
-    case 71:
+    /*case 71:
         va_start (argp,v);
 		typedef int  (*errhandler_create_func)  (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level, vector *v);
 		errhandler_create_func QMPI_Errhandler_create_ptr =  (errhandler_create_func) func_ptr;
@@ -1121,7 +1122,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level, vector *v);\n
-     
+     */
     case 72:
         va_start (argp,v);
 		typedef int  (*errhandler_free_func)  (MPI_Errhandler *errhandler, int level, vector *v);
@@ -6056,7 +6057,7 @@ _EXTERN_C_ int MPI_Dist_graph_neighbors_count (MPI_Comm comm, int *inneighbors, 
   return ret;
 }
 /* ================== C Wrappers for MPI_Errhandler_create ================== */
-_EXTERN_C_ int QMPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v){
   return PMPI_Errhandler_create (function, errhandler);
 }
 _EXTERN_C_ int MPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler) { 
@@ -6068,7 +6069,7 @@ _EXTERN_C_ int MPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhan
   typedef int (*_errhandler_create_func) (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v);
   int ret= ( (_errhandler_create_func) f_dl) (function, errhandler, new_level, &v);
   return ret;
-}
+}*/
 /* ================== C Wrappers for MPI_Errhandler_free ================== */
 _EXTERN_C_ int QMPI_Errhandler_free (MPI_Errhandler *errhandler, int level,  vector* v){
   return PMPI_Errhandler_free (errhandler);
