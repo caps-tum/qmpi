@@ -120,7 +120,7 @@ void* QMPI_Array[]={
    ,    &QMPI_Type_create_hindexed_block,&QMPI_Type_create_hvector,        &QMPI_Type_create_indexed_block
    ,    &QMPI_Type_create_keyval,      &QMPI_Type_create_resized,          &QMPI_Type_create_struct
    ,    &QMPI_Type_create_subarray,    &QMPI_Type_delete_attr,             &QMPI_Type_dup
-   ,    &QMPI_Type_extent,             &QMPI_Type_free,                    &QMPI_Type_free_keyval
+   /*,    &QMPI_Type_extent*/,             &QMPI_Type_free,                    &QMPI_Type_free_keyval
    ,    &QMPI_Type_get_attr,           &QMPI_Type_get_contents,            &QMPI_Type_get_envelope
    ,    &QMPI_Type_get_extent,         &QMPI_Type_get_extent_x,            &QMPI_Type_get_name
    ,    &QMPI_Type_get_true_extent,    &QMPI_Type_get_true_extent_x/*,       &QMPI_Type_hindexed*/
@@ -248,7 +248,7 @@ void* PMPI_Array[]={
    ,    &PMPI_Type_create_hindexed_block,&PMPI_Type_create_hvector,        &PMPI_Type_create_indexed_block
    ,    &PMPI_Type_create_keyval,      &PMPI_Type_create_resized,          &PMPI_Type_create_struct
    ,    &PMPI_Type_create_subarray,    &PMPI_Type_delete_attr,             &PMPI_Type_dup
-   ,    &PMPI_Type_extent,             &PMPI_Type_free,                    &PMPI_Type_free_keyval
+   /*,    &PMPI_Type_extent*/,             &PMPI_Type_free,                    &PMPI_Type_free_keyval
    ,    &PMPI_Type_get_attr,           &PMPI_Type_get_contents,            &PMPI_Type_get_envelope
    ,    &PMPI_Type_get_extent,         &PMPI_Type_get_extent_x,            &PMPI_Type_get_name
    ,    &PMPI_Type_get_true_extent,    &PMPI_Type_get_true_extent_x/*,       &PMPI_Type_hindexed*/

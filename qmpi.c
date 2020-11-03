@@ -4121,7 +4121,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_dup (MPI_Datatype type, MPI_Datatype *newtype, int level, vector *v);\n
      
-    case 291:
+    /*case 291:
         va_start (argp,v);
 		typedef int  (*type_extent_func)  (MPI_Datatype type, MPI_Aint *extent, int level, vector *v);
 		type_extent_func QMPI_Type_extent_ptr =  (type_extent_func) func_ptr;
@@ -4131,7 +4131,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Type_extent (MPI_Datatype type, MPI_Aint *extent, int level, vector *v);\n
-     
+    */ 
     case 292:
         va_start (argp,v);
 		typedef int  (*type_free_func)  (MPI_Datatype *type, int level, vector *v);
@@ -9134,7 +9134,7 @@ _EXTERN_C_ int MPI_Type_dup (MPI_Datatype type, MPI_Datatype *newtype) {
   return ret;
 }
 /* ================== C Wrappers for MPI_Type_extent ================== */
-_EXTERN_C_ int QMPI_Type_extent (MPI_Datatype type, MPI_Aint *extent, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Type_extent (MPI_Datatype type, MPI_Aint *extent, int level,  vector* v){
   return PMPI_Type_extent ( type, extent);
 }
 _EXTERN_C_ int MPI_Type_extent (MPI_Datatype type, MPI_Aint *extent) { 
@@ -9147,6 +9147,7 @@ _EXTERN_C_ int MPI_Type_extent (MPI_Datatype type, MPI_Aint *extent) {
   int ret= ( (_type_extent_func) f_dl) (type, extent, new_level, &v);
   return ret;
 }
+*/
 /* ================== C Wrappers for MPI_Type_free ================== */
 _EXTERN_C_ int QMPI_Type_free (MPI_Datatype *type, int level,  vector* v){
   return PMPI_Type_free (type);

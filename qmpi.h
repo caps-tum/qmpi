@@ -333,7 +333,7 @@ _MPI_Type_create_struct	 =	287	,
 _MPI_Type_create_subarray	 =	288	,
 _MPI_Type_delete_attr	 =	289	,
 _MPI_Type_dup	 =	290	,
-_MPI_Type_extent	 =	291	,
+//_MPI_Type_extent	 =	291	,
 _MPI_Type_free	 =	292	,
 _MPI_Type_free_keyval	 =	293	,
 _MPI_Type_get_attr	 =	294	,
@@ -1328,7 +1328,7 @@ int             init_qmpi_struct        (void);
     int QMPI_Type_dup(MPI_Datatype type, MPI_Datatype *newtype, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_extent ================== */
-    int QMPI_Type_extent(MPI_Datatype type, MPI_Aint *extent, int level,  vector* v);
+//    int QMPI_Type_extent(MPI_Datatype type, MPI_Aint *extent, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_free ================== */
     int QMPI_Type_free(MPI_Datatype *type, int level,  vector* v);
