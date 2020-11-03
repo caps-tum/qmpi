@@ -284,16 +284,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		const char* add_error_string_arg2		   = va_arg (argp, const char*);
 		ret=  (add_error_string_ptr)  (add_error_string_arg1,add_error_string_arg2, level ,v);
 		break;
-	/*case 5	:	    
-		//int QMPI_Address (void *location, MPI_Aint *address, int level ,vector* v);
-		va_start (argp,v);
-		typedef int  (*address_func)  (void *location, MPI_Aint *address, int level ,vector* v);
-		address_func address_ptr	=	 (address_func) func_ptr;
-		void* address_arg1			=	va_arg (argp, void*);
-		MPI_Aint* address_arg2		=	va_arg (argp, MPI_Aint*);
-		ret=  (address_ptr)  (address_arg1, address_arg2, level, v);
-		break;
-	*/
+
 	case 6	:	    
 		//int QMPI_Allgather (const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, int level ,vector* v);
 		va_start (argp,v);
@@ -1112,17 +1103,6 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Dist_graph_neighbors_count (MPI_Comm comm, int *inneighbors, int *outneighbors, int *weighted, int level, vector *v);\n
      
-    /*case 71:
-        va_start (argp,v);
-		typedef int  (*errhandler_create_func)  (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level, vector *v);
-		errhandler_create_func QMPI_Errhandler_create_ptr =  (errhandler_create_func) func_ptr;
-		MPI_Handler_function * errhandler_create_func_arg0 = va_arg (argp, MPI_Handler_function *);
-		MPI_Errhandler * errhandler_create_func_arg1 = va_arg (argp, MPI_Errhandler *);
-		ret =  (QMPI_Errhandler_create_ptr)  (errhandler_create_func_arg0, errhandler_create_func_arg1,  level, v);
-		break;
-		 
-        // int QMPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level, vector *v);\n
-     */
     case 72:
         va_start (argp,v);
 		typedef int  (*errhandler_free_func)  (MPI_Errhandler *errhandler, int level, vector *v);
@@ -1132,29 +1112,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Errhandler_free (MPI_Errhandler *errhandler, int level, vector *v);\n
-     
-    /*case 73:
-        va_start (argp,v);
-		typedef int  (*errhandler_get_func)  (MPI_Comm comm, MPI_Errhandler *errhandler, int level, vector *v);
-		errhandler_get_func QMPI_Errhandler_get_ptr =  (errhandler_get_func) func_ptr;
-		MPI_Comm errhandler_get_func_arg0 = va_arg (argp, MPI_Comm);
-		MPI_Errhandler * errhandler_get_func_arg1 = va_arg (argp, MPI_Errhandler *);
-		ret =  (QMPI_Errhandler_get_ptr)  (errhandler_get_func_arg0, errhandler_get_func_arg1,  level, v);
-		break;
-		 
-        // int QMPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler, int level, vector *v);\n
-    */ 
-    /*case 74:
-        va_start (argp,v);
-		typedef int  (*errhandler_set_func)  (MPI_Comm comm, MPI_Errhandler errhandler, int level, vector *v);
-		errhandler_set_func QMPI_Errhandler_set_ptr =  (errhandler_set_func) func_ptr;
-		MPI_Comm errhandler_set_func_arg0 = va_arg (argp, MPI_Comm);
-		MPI_Errhandler errhandler_set_func_arg1 = va_arg (argp, MPI_Errhandler);
-		ret =  (QMPI_Errhandler_set_ptr)  (errhandler_set_func_arg0, errhandler_set_func_arg1,  level, v);
-		break;
-		 
-        // int QMPI_Errhandler_set (MPI_Comm comm, MPI_Errhandler errhandler, int level, vector *v);\n
-    */ 
+      
     case 75:
         va_start (argp,v);
 		typedef int  (*error_class_func)  (int errorcode, int *errorclass, int level, vector *v);
@@ -3331,16 +3289,6 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Pack_size (int incount, MPI_Datatype datatype, MPI_Comm comm, int *size, int level, vector *v);\n
      
-    /*case 235: // TODO: FIX THİS     !!!!!!!!!!!
-        va_start (argp,v);
-		typedef int  (*pcontrol_func)  (const int first_level, int level,  vector* v);
-		pcontrol_func QMPI_Pcontrol_ptr =  (pcontrol_func) func_ptr;
-		const int pcontrol_func_arg0 = va_arg (argp, const int);
-		ret =  (QMPI_Pcontrol_ptr)  (pcontrol_func_arg0, level, v);
-		break;
-		 
-        // int QMPI_Pcontrol (const int first_level, int level,  vector* v);\n
-     */
     case 236:
         va_start (argp,v);
 		typedef int  (*probe_func)  (int source, int tag, MPI_Comm comm, MPI_Status *status, int level, vector *v);
@@ -4120,18 +4068,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Type_dup (MPI_Datatype type, MPI_Datatype *newtype, int level, vector *v);\n
-     
-    /*case 291:
-        va_start (argp,v);
-		typedef int  (*type_extent_func)  (MPI_Datatype type, MPI_Aint *extent, int level, vector *v);
-		type_extent_func QMPI_Type_extent_ptr =  (type_extent_func) func_ptr;
-		MPI_Datatype type_extent_func_arg0 = va_arg (argp, MPI_Datatype);
-		MPI_Aint * type_extent_func_arg1 = va_arg (argp, MPI_Aint *);
-		ret =  (QMPI_Type_extent_ptr)  (type_extent_func_arg0, type_extent_func_arg1,  level, v);
-		break;
-		 
-        // int QMPI_Type_extent (MPI_Datatype type, MPI_Aint *extent, int level, vector *v);\n
-    */ 
+      
     case 292:
         va_start (argp,v);
 		typedef int  (*type_free_func)  (MPI_Datatype *type, int level, vector *v);
@@ -4255,20 +4192,6 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_get_true_extent_x (MPI_Datatype datatype, MPI_Count *true_lb, MPI_Count *true_extent, int level, vector *v);\n
      
-    /*case 302:
-        va_start (argp,v);
-		typedef int  (*type_hindexed_func)  (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);
-		type_hindexed_func QMPI_Type_hindexed_ptr =  (type_hindexed_func) func_ptr;
-		int type_hindexed_func_arg0 = va_arg (argp, int);
-		int* type_hindexed_func_arg1 = va_arg (argp, int*);
-		MPI_Aint* type_hindexed_func_arg2 = va_arg (argp, MPI_Aint*);
-		MPI_Datatype type_hindexed_func_arg3 = va_arg (argp, MPI_Datatype);
-		MPI_Datatype * type_hindexed_func_arg4 = va_arg (argp, MPI_Datatype *);
-		ret =  (QMPI_Type_hindexed_ptr)  (type_hindexed_func_arg0, type_hindexed_func_arg1, type_hindexed_func_arg2, type_hindexed_func_arg3, type_hindexed_func_arg4,  level, v);
-		break;
-		 
-        // int QMPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);\n
-     */
     case 303:
         va_start (argp,v);
 		typedef int  (*type_hvector_func)  (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);
@@ -4297,17 +4220,6 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_indexed (int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);\n
      
-    /*case 305:
-        va_start (argp,v);
-		typedef int  (*type_lb_func)  (MPI_Datatype type, MPI_Aint *lb, int level, vector *v);
-		type_lb_func QMPI_Type_lb_ptr =  (type_lb_func) func_ptr;
-		MPI_Datatype type_lb_func_arg0 = va_arg (argp, MPI_Datatype);
-		MPI_Aint * type_lb_func_arg1 = va_arg (argp, MPI_Aint *);
-		ret =  (QMPI_Type_lb_ptr)  (type_lb_func_arg0, type_lb_func_arg1,  level, v);
-		break;
-		 
-        // int QMPI_Type_lb (MPI_Datatype type, MPI_Aint *lb, int level, vector *v);\n
-    */ 
     case 306:
         va_start (argp,v);
 		typedef int  (*type_match_size_func)  (int typeclass, int size, MPI_Datatype *type, int level, vector *v);
@@ -4365,31 +4277,6 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_size_x (MPI_Datatype type, MPI_Count *size, int level, vector *v);\n
      
-    /*case 311:
-        va_start (argp,v);
-		typedef int  (*type_struct_func)  (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level, vector *v);
-		type_struct_func QMPI_Type_struct_ptr =  (type_struct_func) func_ptr;
-		int type_struct_func_arg0 = va_arg (argp, int);
-		int* type_struct_func_arg1 = va_arg (argp, int*);
-		MPI_Aint* type_struct_func_arg2 = va_arg (argp, MPI_Aint*);
-		MPI_Datatype* type_struct_func_arg3 = va_arg (argp, MPI_Datatype*);
-		MPI_Datatype * type_struct_func_arg4 = va_arg (argp, MPI_Datatype *);
-		ret =  (QMPI_Type_struct_ptr)  (type_struct_func_arg0, type_struct_func_arg1, type_struct_func_arg2, type_struct_func_arg3, type_struct_func_arg4,  level, v);
-		break;
-		 
-        // int QMPI_Type_struct (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level, vector *v);\n
-    */ 
-    /*case 312:
-        va_start (argp,v);
-		typedef int  (*type_ub_func)  (MPI_Datatype mtype, MPI_Aint *ub, int level, vector *v);
-		type_ub_func QMPI_Type_ub_ptr =  (type_ub_func) func_ptr;
-		MPI_Datatype type_ub_func_arg0 = va_arg (argp, MPI_Datatype);
-		MPI_Aint * type_ub_func_arg1 = va_arg (argp, MPI_Aint *);
-		ret =  (QMPI_Type_ub_ptr)  (type_ub_func_arg0, type_ub_func_arg1,  level, v);
-		break;
-		 
-        // int QMPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub, int level, vector *v);\n
-    */ 
     case 313:
         va_start (argp,v);
 		typedef int  (*type_vector_func)  (int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);
@@ -5129,20 +5016,6 @@ _EXTERN_C_ int MPI_Add_error_string (int errorcode, const char *string) {
    int ret= ( (_add_error_string_func) f_dl) (errorcode, string, new_level, &v);
    return ret;
 }
-/* ================== C Wrappers for MPI_Address ================== 5*/
-/*_EXTERN_C_ int QMPI_Address (void *location, MPI_Aint *address, int level,  vector* v){
-	return PMPI_Address (location, address);
-}
-_EXTERN_C_ int MPI_Address (void *location, MPI_Aint *address) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Address,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Address,&v,location, address);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Address, &v);
-  typedef int (*_address_func)  (void *location, MPI_Aint *address, int level ,vector* v);
-  int ret= ( (_address_func) f_dl) (location, address, new_level, &v);
-  return ret;
-}*/
 /* ================== C Wrappers for MPI_Allgather ================== 6*/
 _EXTERN_C_ int QMPI_Allgather (const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, int level,  vector* v){
 	return PMPI_Allgather (sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm);
@@ -6056,20 +5929,6 @@ _EXTERN_C_ int MPI_Dist_graph_neighbors_count (MPI_Comm comm, int *inneighbors, 
   int ret= ( (_dist_graph_neighbors_count_func) f_dl) (comm, inneighbors, outneighbors, weighted, new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Errhandler_create ================== */
-/*_EXTERN_C_ int QMPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v){
-  return PMPI_Errhandler_create (function, errhandler);
-}
-_EXTERN_C_ int MPI_Errhandler_create (MPI_Handler_function *function, MPI_Errhandler *errhandler) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Errhandler_create,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Errhandler_create,&v,function, errhandler);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Errhandler_create, &v);
-  typedef int (*_errhandler_create_func) (MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v);
-  int ret= ( (_errhandler_create_func) f_dl) (function, errhandler, new_level, &v);
-  return ret;
-}*/
 /* ================== C Wrappers for MPI_Errhandler_free ================== */
 _EXTERN_C_ int QMPI_Errhandler_free (MPI_Errhandler *errhandler, int level,  vector* v){
   return PMPI_Errhandler_free (errhandler);
@@ -6084,35 +5943,6 @@ _EXTERN_C_ int MPI_Errhandler_free (MPI_Errhandler *errhandler) {
   int ret= ( (_errhandler_free_func) f_dl) ( errhandler, new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Errhandler_get ================== */
-/*_EXTERN_C_ int QMPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler, int level,  vector* v){
-  return PMPI_Errhandler_get (comm, errhandler);
-}
-_EXTERN_C_ int MPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler) { 
- void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Errhandler_get,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Errhandler_get,&v,comm, errhandler);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Errhandler_get, &v);
-  typedef int (*_errhandler_get_func) (MPI_Comm comm, MPI_Errhandler *errhandler, int level,  vector* v);
-  int ret= ( (_errhandler_get_func) f_dl) (comm, errhandler, new_level, &v);
-  return ret;
-}
-*/
-/* ================== C Wrappers for MPI_Errhandler_set ================== */
-/*_EXTERN_C_ int QMPI_Errhandler_set (MPI_Comm comm, MPI_Errhandler errhandler, int level,  vector* v){
-  return PMPI_Errhandler_set (comm, errhandler);
-}
-_EXTERN_C_ int MPI_Errhandler_set (MPI_Comm comm, MPI_Errhandler errhandler) { 
- void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Errhandler_set,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Errhandler_set,&v,comm, errhandler);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Errhandler_set, &v);
-  typedef int (*_errhandler_set_func) (MPI_Comm comm, MPI_Errhandler errhandler, int level,  vector* v);
-  int ret= ( (_errhandler_set_func) f_dl) (comm, errhandler, new_level, &v);
-  return ret;
-}*/
 /* ================== C Wrappers for MPI_Error_class ================== */
 _EXTERN_C_ int QMPI_Error_class (int errorcode, int *errorclass, int level,  vector* v){
   return PMPI_Error_class (errorcode, errorclass);
@@ -8356,7 +8186,6 @@ _EXTERN_C_ int MPI_Pcontrol (const int level, ...) {
   typedef int  (*pcontrol_func)  (const int first_level, int level,  vector* v);
   for  (;i<vector_total (&v)-1;)
   {	
-	//printf ( " I n   P c o n t r o l   i = %d   , v e c t o r  s z : %d\n", i, vector_total (&v));
 	 (    (pcontrol_func)     ( (*VECTOR_GET (&v,i)).table[_MPI_Pcontrol].func_ptr) )  (level, i, &v);
 	i= (  (*VECTOR_GET (&v,i)).table[_MPI_Pcontrol].level );
   }
@@ -9133,21 +8962,6 @@ _EXTERN_C_ int MPI_Type_dup (MPI_Datatype type, MPI_Datatype *newtype) {
   int ret= ( (_type_dup_func) f_dl) ( type, newtype, new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Type_extent ================== */
-/*_EXTERN_C_ int QMPI_Type_extent (MPI_Datatype type, MPI_Aint *extent, int level,  vector* v){
-  return PMPI_Type_extent ( type, extent);
-}
-_EXTERN_C_ int MPI_Type_extent (MPI_Datatype type, MPI_Aint *extent) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Type_extent,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Type_extent,&v,type, extent);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Type_extent, &v);
-  typedef int (*_type_extent_func) (MPI_Datatype type, MPI_Aint *extent, int level,  vector* v);
-  int ret= ( (_type_extent_func) f_dl) (type, extent, new_level, &v);
-  return ret;
-}
-*/
 /* ================== C Wrappers for MPI_Type_free ================== */
 _EXTERN_C_ int QMPI_Type_free (MPI_Datatype *type, int level,  vector* v){
   return PMPI_Type_free (type);
@@ -9288,35 +9102,7 @@ _EXTERN_C_ int MPI_Type_get_true_extent_x (MPI_Datatype datatype, MPI_Count *tru
   int ret= ( (_type_get_true_extent_x_func) f_dl) (datatype, true_lb, true_extent, new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Type_hindexed ================== */
-/*_EXTERN_C_ int QMPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
-  return PMPI_Type_hindexed ( count,  array_of_blocklengths, array_of_displacements, oldtype, newtype ) ;
-}
-_EXTERN_C_ int MPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Type_hindexed,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Type_hindexed,&v, count,  array_of_blocklengths, array_of_displacements, oldtype, newtype);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Type_hindexed, &v);
-  typedef int (*_type_hindexed_func) (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
-  int ret= ( (_type_hindexed_func) f_dl) ( count,  array_of_blocklengths, array_of_displacements, oldtype, newtype, new_level, &v);
-  return ret;
-}*/
-/* ================== C Wrappers for MPI_Type_hvector ================== */
-/*_EXTERN_C_ int QMPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
-  return PMPI_Type_hvector ( count, blocklength, stride, oldtype, newtype);
-}
-_EXTERN_C_ int MPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Type_hvector,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Type_hvector,&v,count, blocklength, stride, oldtype, newtype);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Type_hvector, &v);
-  typedef int (*_type_hvector_func) (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
-  int ret= ( (_type_hvector_func) f_dl) (count, blocklength, stride, oldtype, newtype, new_level, &v);
-  return ret;
-}
-*/
+
 /* ================== C Wrappers for MPI_Type_indexed ================== */
 _EXTERN_C_ int QMPI_Type_indexed (int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_indexed ( count, array_of_blocklengths, array_of_displacements, oldtype, newtype );
@@ -9331,21 +9117,7 @@ _EXTERN_C_ int MPI_Type_indexed (int count, const int array_of_blocklengths[], c
   int ret= ( (_type_indexed_func) f_dl) ( count, array_of_blocklengths, array_of_displacements, oldtype, newtype , new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Type_lb ================== */
-/*_EXTERN_C_ int QMPI_Type_lb (MPI_Datatype type, MPI_Aint *lb, int level,  vector* v){
-  return PMPI_Type_lb ( type, lb);
-}
-_EXTERN_C_ int MPI_Type_lb (MPI_Datatype type, MPI_Aint *lb) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Type_lb,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Type_lb,&v,type, lb);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Type_lb, &v);
-  typedef int (*_type_lb_func) (MPI_Datatype type, MPI_Aint *lb, int level,  vector* v);
-  int ret= ( (_type_lb_func) f_dl) (type, lb, new_level, &v);
-  return ret;
-}
-*/
+
 /* ================== C Wrappers for MPI_Type_match_size ================== */
 _EXTERN_C_ int QMPI_Type_match_size (int typeclass, int size, MPI_Datatype *type, int level,  vector* v){
   return PMPI_Type_match_size ( typeclass,  size, type);
@@ -9416,35 +9188,6 @@ _EXTERN_C_ int MPI_Type_size_x (MPI_Datatype type, MPI_Count *size) {
   int ret= ( (_type_size_x_func) f_dl) (type, size, new_level, &v);
   return ret;
 }
-/* ================== C Wrappers for MPI_Type_struct ================== */
-/*_EXTERN_C_ int QMPI_Type_struct (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level,  vector* v){
-  return PMPI_Type_struct ( count, array_of_blocklengths, array_of_displacements, array_of_types, newtype  );
-}
-_EXTERN_C_ int MPI_Type_struct (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Type_struct,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Type_struct,&v,count, array_of_blocklengths, array_of_displacements, array_of_types, newtype );
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Type_struct, &v);
-  typedef int (*_type_struct_func) (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level,  vector* v);
-  int ret= ( (_type_struct_func) f_dl) (count, array_of_blocklengths, array_of_displacements, array_of_types, newtype , new_level, &v);
-  return ret;
-}
-*/
-/* ================== C Wrappers for MPI_Type_ub ================== */
-/*_EXTERN_C_ int QMPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v){
-  return PMPI_Type_ub ( mtype, ub);
-}
-_EXTERN_C_ int MPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub) { 
-  void* f_dl=NULL;
-  QMPI_TABLE_QUERY (_MPI_Type_ub,&f_dl, (*VECTOR_GET (&v, 0)).table );
-  //int ret=EXEC_FUNC (f_dl,0,_MPI_Type_ub,&v,mtype, ub);
-  //
-  int new_level=QMPI_GET_LEVEL (QMPI_LEVEL,_MPI_Type_ub, &v);
-  typedef int (*_type_ub_func) (MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v);
-  int ret= ( (_type_ub_func) f_dl) (mtype, ub, new_level, &v);
-  return ret;
-}*/
 /* ================== C Wrappers for MPI_Type_vector ================== */
 _EXTERN_C_ int QMPI_Type_vector (int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_vector ( count, blocklength, stride, oldtype, newtype);

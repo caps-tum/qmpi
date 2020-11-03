@@ -24,7 +24,7 @@
 void* QMPI_Array[]={  
   
         &QMPI_Abort,                   &QMPI_Accumulate,                   &QMPI_Add_error_class
-   ,    &QMPI_Add_error_code,          &QMPI_Add_error_string/*,             &QMPI_Address*/
+   ,    &QMPI_Add_error_code,          &QMPI_Add_error_string
    ,    &QMPI_Allgather,               &QMPI_Allgatherv,                   &QMPI_Alloc_mem
    ,    &QMPI_Allreduce,               &QMPI_Alltoall   ,                  &QMPI_Alltoallv
    ,    &QMPI_Alltoallw,               &QMPI_Attr_delete,                  &QMPI_Attr_get
@@ -46,8 +46,7 @@ void* QMPI_Array[]={
    ,    &QMPI_Comm_set_name,           &QMPI_Comm_size,                    &QMPI_Comm_split
    ,    &QMPI_Comm_split_type,         &QMPI_Comm_test_inter,              &QMPI_Compare_and_swap
    ,    &QMPI_Dims_create,             &QMPI_Dist_graph_create,            &QMPI_Dist_graph_create_adjacent
-   ,    &QMPI_Dist_graph_neighbors,    &QMPI_Dist_graph_neighbors_count/*,   &QMPI_Errhandler_create*/
-   ,    &QMPI_Errhandler_free/*,         &QMPI_Errhandler_get*//*,               &QMPI_Errhandler_set*/
+   ,    &QMPI_Dist_graph_neighbors,    &QMPI_Dist_graph_neighbors_count,   &QMPI_Errhandler_free
    ,    &QMPI_Error_class,             &QMPI_Error_string,                 &QMPI_Exscan
    ,    &QMPI_Fetch_and_op,            &QMPI_File_call_errhandler,         &QMPI_File_close
    ,    &QMPI_File_create_errhandler,  &QMPI_File_delete,                  &QMPI_File_get_amode
@@ -84,7 +83,7 @@ void* QMPI_Array[]={
    ,    &QMPI_Iallreduce,              &QMPI_Ialltoall,                    &QMPI_Ialltoallv
    ,    &QMPI_Ialltoallw,              &QMPI_Ibarrier,                     &QMPI_Ibcast
    ,    &QMPI_Ibsend,                  &QMPI_Iexscan,                      &QMPI_Igather
-   ,    &QMPI_Igatherv,                &QMPI_Improbe, 		           &QMPI_Imrecv
+   ,    &QMPI_Igatherv,                &QMPI_Improbe, 		               &QMPI_Imrecv
    ,    &QMPI_Ineighbor_allgather,     &QMPI_Ineighbor_allgatherv,         &QMPI_Ineighbor_alltoall
    ,    &QMPI_Ineighbor_alltoallv,     &QMPI_Ineighbor_alltoallw,          &QMPI_Info_create
    ,    &QMPI_Info_delete,             &QMPI_Info_dup,                     &QMPI_Info_free
@@ -120,14 +119,13 @@ void* QMPI_Array[]={
    ,    &QMPI_Type_create_hindexed_block,&QMPI_Type_create_hvector,        &QMPI_Type_create_indexed_block
    ,    &QMPI_Type_create_keyval,      &QMPI_Type_create_resized,          &QMPI_Type_create_struct
    ,    &QMPI_Type_create_subarray,    &QMPI_Type_delete_attr,             &QMPI_Type_dup
-   /*,    &QMPI_Type_extent*/,             &QMPI_Type_free,                    &QMPI_Type_free_keyval
+   ,    &QMPI_Type_free,               &QMPI_Type_free_keyval
    ,    &QMPI_Type_get_attr,           &QMPI_Type_get_contents,            &QMPI_Type_get_envelope
    ,    &QMPI_Type_get_extent,         &QMPI_Type_get_extent_x,            &QMPI_Type_get_name
-   ,    &QMPI_Type_get_true_extent,    &QMPI_Type_get_true_extent_x/*,       &QMPI_Type_hindexed*/
-   /*,    &QMPI_Type_hvector*/,            &QMPI_Type_indexed/*,                 &QMPI_Type_lb*/
+   ,    &QMPI_Type_get_true_extent,    &QMPI_Type_get_true_extent_x,       &QMPI_Type_indexed
    ,    &QMPI_Type_match_size,         &QMPI_Type_set_attr,                &QMPI_Type_set_name
-   ,    &QMPI_Type_size,               &QMPI_Type_size_x/*,                  &QMPI_Type_struct*/
-   /*,    &QMPI_Type_ub*/,                 &QMPI_Type_vector,                  &QMPI_Unpack
+   ,    &QMPI_Type_size,               &QMPI_Type_size_x
+   ,    &QMPI_Type_vector,             &QMPI_Unpack
    ,    &QMPI_Unpack_external,         &QMPI_Unpublish_name,               &QMPI_Wait
    ,    &QMPI_Waitall,                 &QMPI_Waitany,                      &QMPI_Waitsome
    ,    &QMPI_Win_allocate,            &QMPI_Win_allocate_shared,          &QMPI_Win_attach
@@ -152,10 +150,10 @@ void* QMPI_Array[]={
 void* PMPI_Array[]={  
   
         &PMPI_Abort,                   &PMPI_Accumulate,                   &PMPI_Add_error_class
-   ,    &PMPI_Add_error_code,          &PMPI_Add_error_string/*,             &PMPI_Address*/
-   ,    &PMPI_Allgather,               &PMPI_Allgatherv,                   &PMPI_Alloc_mem
-   ,    &PMPI_Allreduce,               &PMPI_Alltoall   ,                  &PMPI_Alltoallv
-   ,    &PMPI_Alltoallw,               &PMPI_Attr_delete,                  &PMPI_Attr_get
+   ,    &PMPI_Add_error_code,          &PMPI_Add_error_string,             &PMPI_Allgather
+   ,    &PMPI_Allgatherv,              &PMPI_Alloc_mem,                    &PMPI_Allreduce
+   ,    &PMPI_Alltoall   ,             &PMPI_Alltoallv,                    &PMPI_Alltoallw
+   ,    &PMPI_Attr_delete,             &PMPI_Attr_get
    ,    &PMPI_Attr_put,                &PMPI_Barrier,                      &PMPI_Bcast
    ,    &PMPI_Bsend,                   &PMPI_Bsend_init,                   &PMPI_Buffer_attach
    ,    &PMPI_Buffer_detach,           &PMPI_Cancel,                       &PMPI_Cart_coords
@@ -174,8 +172,7 @@ void* PMPI_Array[]={
    ,    &PMPI_Comm_set_name,           &PMPI_Comm_size,                    &PMPI_Comm_split
    ,    &PMPI_Comm_split_type,         &PMPI_Comm_test_inter,              &PMPI_Compare_and_swap
    ,    &PMPI_Dims_create,             &PMPI_Dist_graph_create,            &PMPI_Dist_graph_create_adjacent
-   ,    &PMPI_Dist_graph_neighbors,    &PMPI_Dist_graph_neighbors_count/*,   &PMPI_Errhandler_create*/
-   ,    &PMPI_Errhandler_free/*,       &PMPI_Errhandler_get*//*,               &PMPI_Errhandler_set*/
+   ,    &PMPI_Dist_graph_neighbors,    &PMPI_Dist_graph_neighbors_count,   &PMPI_Errhandler_free
    ,    &PMPI_Error_class,             &PMPI_Error_string,                 &PMPI_Exscan
    ,    &PMPI_Fetch_and_op,            &PMPI_File_call_errhandler,         &PMPI_File_close
    ,    &PMPI_File_create_errhandler,  &PMPI_File_delete,                  &PMPI_File_get_amode
@@ -248,14 +245,13 @@ void* PMPI_Array[]={
    ,    &PMPI_Type_create_hindexed_block,&PMPI_Type_create_hvector,        &PMPI_Type_create_indexed_block
    ,    &PMPI_Type_create_keyval,      &PMPI_Type_create_resized,          &PMPI_Type_create_struct
    ,    &PMPI_Type_create_subarray,    &PMPI_Type_delete_attr,             &PMPI_Type_dup
-   /*,    &PMPI_Type_extent*/,             &PMPI_Type_free,                    &PMPI_Type_free_keyval
+   ,    &PMPI_Type_free,               &PMPI_Type_free_keyval
    ,    &PMPI_Type_get_attr,           &PMPI_Type_get_contents,            &PMPI_Type_get_envelope
    ,    &PMPI_Type_get_extent,         &PMPI_Type_get_extent_x,            &PMPI_Type_get_name
-   ,    &PMPI_Type_get_true_extent,    &PMPI_Type_get_true_extent_x/*,       &PMPI_Type_hindexed*/
-   /*,    &PMPI_Type_hvector*/,            &PMPI_Type_indexed/*,                 &PMPI_Type_lb*/
+   ,    &PMPI_Type_get_true_extent,    &PMPI_Type_get_true_extent_x,       &PMPI_Type_indexed
    ,    &PMPI_Type_match_size,         &PMPI_Type_set_attr,                &PMPI_Type_set_name
-   ,    &PMPI_Type_size,               &PMPI_Type_size_x/*,                  &PMPI_Type_struct */
-   /*,    &PMPI_Type_ub*/,                 &PMPI_Type_vector,                  &PMPI_Unpack
+   ,    &PMPI_Type_size,               &PMPI_Type_size_x,                  &PMPI_Type_vector
+   ,    &PMPI_Unpack
    ,    &PMPI_Unpack_external,         &PMPI_Unpublish_name,               &PMPI_Wait
    ,    &PMPI_Waitall,                 &PMPI_Waitany,                      &PMPI_Waitsome
    ,    &PMPI_Win_allocate,            &PMPI_Win_allocate_shared,          &PMPI_Win_attach
