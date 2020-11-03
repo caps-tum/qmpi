@@ -47,7 +47,6 @@ _MPI_Accumulate	 =	1	,
 _MPI_Add_error_class	 =	2	,
 _MPI_Add_error_code	 =	3	,
 _MPI_Add_error_string	 =	4	,
-_MPI_Address	 =	5	,
 _MPI_Allgather	 =	6	,
 _MPI_Allgatherv	 =	7	,
 _MPI_Alloc_mem	 =	8	,
@@ -113,10 +112,7 @@ _MPI_Dist_graph_create	 =	67	,
 _MPI_Dist_graph_create_adjacent	 =	68	,
 _MPI_Dist_graph_neighbors	 =	69	,
 _MPI_Dist_graph_neighbors_count	 =	70	,
-_MPI_Errhandler_create	 =	71	,
 _MPI_Errhandler_free	 =	72	,
-_MPI_Errhandler_get	 =	73	,
-_MPI_Errhandler_set	 =	74	,
 _MPI_Error_class	 =	75	,
 _MPI_Error_string	 =	76	,
 _MPI_Exscan	 =	77	,
@@ -333,7 +329,6 @@ _MPI_Type_create_struct	 =	287	,
 _MPI_Type_create_subarray	 =	288	,
 _MPI_Type_delete_attr	 =	289	,
 _MPI_Type_dup	 =	290	,
-_MPI_Type_extent	 =	291	,
 _MPI_Type_free	 =	292	,
 _MPI_Type_free_keyval	 =	293	,
 _MPI_Type_get_attr	 =	294	,
@@ -344,17 +339,12 @@ _MPI_Type_get_extent_x	 =	298	,
 _MPI_Type_get_name	 =	299	,
 _MPI_Type_get_true_extent	 =	300	,
 _MPI_Type_get_true_extent_x	 =	301	,
-_MPI_Type_hindexed	 =	302	,
-_MPI_Type_hvector	 =	303	,
 _MPI_Type_indexed	 =	304	,
-_MPI_Type_lb	 =	305	,
 _MPI_Type_match_size	 =	306	,
 _MPI_Type_set_attr	 =	307	,
 _MPI_Type_set_name	 =	308	,
 _MPI_Type_size	 =	309	,
 _MPI_Type_size_x	 =	310	,
-_MPI_Type_struct	 =	311	,
-_MPI_Type_ub	 =	312	,
 _MPI_Type_vector	 =	313	,
 _MPI_Unpack	 =	314	,
 _MPI_Unpack_external	 =	315	,
@@ -474,9 +464,6 @@ int             init_qmpi_struct        (void);
 
 /* ================== C Wrappers for MPI_Add_error_string ================== */
     int QMPI_Add_error_string(int errorcode, const char *string, int level ,vector* v);
-
-/* ================== C Wrappers for MPI_Address ================== */
-    int QMPI_Address(void *location, MPI_Aint *address, int level ,vector* v);
 
 /* ================== C Wrappers for MPI_Allgather ================== */
     int QMPI_Allgather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, int level ,vector* v);
@@ -673,17 +660,8 @@ int             init_qmpi_struct        (void);
 /* ================== C Wrappers for MPI_Dist_graph_neighbors_count ================== */
     int QMPI_Dist_graph_neighbors_count(MPI_Comm comm, int *inneighbors, int *outneighbors, int *weighted, int level,  vector* v);
 
-/* ================== C Wrappers for MPI_Errhandler_create ================== */
-    int QMPI_Errhandler_create(MPI_Handler_function *function, MPI_Errhandler *errhandler, int level,  vector* v);
-
 /* ================== C Wrappers for MPI_Errhandler_free ================== */
     int QMPI_Errhandler_free(MPI_Errhandler *errhandler, int level,  vector* v);
-
-/* ================== C Wrappers for MPI_Errhandler_get ================== */
-    int QMPI_Errhandler_get(MPI_Comm comm, MPI_Errhandler *errhandler, int level,  vector* v);
-
-/* ================== C Wrappers for MPI_Errhandler_set ================== */
-    int QMPI_Errhandler_set(MPI_Comm comm, MPI_Errhandler errhandler, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Error_class ================== */
     int QMPI_Error_class(int errorcode, int *errorclass, int level,  vector* v);
@@ -1327,9 +1305,6 @@ int             init_qmpi_struct        (void);
 /* ================== C Wrappers for MPI_Type_dup ================== */
     int QMPI_Type_dup(MPI_Datatype type, MPI_Datatype *newtype, int level,  vector* v);
 
-/* ================== C Wrappers for MPI_Type_extent ================== */
-    int QMPI_Type_extent(MPI_Datatype type, MPI_Aint *extent, int level,  vector* v);
-
 /* ================== C Wrappers for MPI_Type_free ================== */
     int QMPI_Type_free(MPI_Datatype *type, int level,  vector* v);
 
@@ -1360,17 +1335,8 @@ int             init_qmpi_struct        (void);
 /* ================== C Wrappers for MPI_Type_get_true_extent_x ================== */
     int QMPI_Type_get_true_extent_x(MPI_Datatype datatype, MPI_Count *true_lb, MPI_Count *true_extent, int level,  vector* v);
 
-/* ================== C Wrappers for MPI_Type_hindexed ================== */
-    int QMPI_Type_hindexed(int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
-
-/* ================== C Wrappers for MPI_Type_hvector ================== */
-    int QMPI_Type_hvector(int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
-
 /* ================== C Wrappers for MPI_Type_indexed ================== */
     int QMPI_Type_indexed(int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
-
-/* ================== C Wrappers for MPI_Type_lb ================== */
-    int QMPI_Type_lb(MPI_Datatype type, MPI_Aint *lb, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_match_size ================== */
     int QMPI_Type_match_size(int typeclass, int size, MPI_Datatype *type, int level,  vector* v);
@@ -1386,12 +1352,6 @@ int             init_qmpi_struct        (void);
 
 /* ================== C Wrappers for MPI_Type_size_x ================== */
     int QMPI_Type_size_x(MPI_Datatype type, MPI_Count *size, int level,  vector* v);
-
-/* ================== C Wrappers for MPI_Type_struct ================== */
-    int QMPI_Type_struct(int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level,  vector* v);
-
-/* ================== C Wrappers for MPI_Type_ub ================== */
-    int QMPI_Type_ub(MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_vector ================== */
     int QMPI_Type_vector(int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
