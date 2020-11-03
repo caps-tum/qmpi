@@ -116,7 +116,7 @@ _MPI_Dist_graph_neighbors_count	 =	70	,
 //_MPI_Errhandler_create	 =	71	,
 _MPI_Errhandler_free	 =	72	,
 //_MPI_Errhandler_get	 =	73	,
-_MPI_Errhandler_set	 =	74	,
+//_MPI_Errhandler_set	 =	74	,
 _MPI_Error_class	 =	75	,
 _MPI_Error_string	 =	76	,
 _MPI_Exscan	 =	77	,
@@ -683,7 +683,7 @@ int             init_qmpi_struct        (void);
  //   int QMPI_Errhandler_get(MPI_Comm comm, MPI_Errhandler *errhandler, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Errhandler_set ================== */
-    int QMPI_Errhandler_set(MPI_Comm comm, MPI_Errhandler errhandler, int level,  vector* v);
+//    int QMPI_Errhandler_set(MPI_Comm comm, MPI_Errhandler errhandler, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Error_class ================== */
     int QMPI_Error_class(int errorcode, int *errorclass, int level,  vector* v);
