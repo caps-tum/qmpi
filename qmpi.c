@@ -4297,7 +4297,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_indexed (int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);\n
      
-    case 305:
+    /*case 305:
         va_start (argp,v);
 		typedef int  (*type_lb_func)  (MPI_Datatype type, MPI_Aint *lb, int level, vector *v);
 		type_lb_func QMPI_Type_lb_ptr =  (type_lb_func) func_ptr;
@@ -4307,7 +4307,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Type_lb (MPI_Datatype type, MPI_Aint *lb, int level, vector *v);\n
-     
+    */ 
     case 306:
         va_start (argp,v);
 		typedef int  (*type_match_size_func)  (int typeclass, int size, MPI_Datatype *type, int level, vector *v);
@@ -9332,7 +9332,7 @@ _EXTERN_C_ int MPI_Type_indexed (int count, const int array_of_blocklengths[], c
   return ret;
 }
 /* ================== C Wrappers for MPI_Type_lb ================== */
-_EXTERN_C_ int QMPI_Type_lb (MPI_Datatype type, MPI_Aint *lb, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Type_lb (MPI_Datatype type, MPI_Aint *lb, int level,  vector* v){
   return PMPI_Type_lb ( type, lb);
 }
 _EXTERN_C_ int MPI_Type_lb (MPI_Datatype type, MPI_Aint *lb) { 
@@ -9345,6 +9345,7 @@ _EXTERN_C_ int MPI_Type_lb (MPI_Datatype type, MPI_Aint *lb) {
   int ret= ( (_type_lb_func) f_dl) (type, lb, new_level, &v);
   return ret;
 }
+*/
 /* ================== C Wrappers for MPI_Type_match_size ================== */
 _EXTERN_C_ int QMPI_Type_match_size (int typeclass, int size, MPI_Datatype *type, int level,  vector* v){
   return PMPI_Type_match_size ( typeclass,  size, type);

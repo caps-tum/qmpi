@@ -347,7 +347,7 @@ _MPI_Type_get_true_extent_x	 =	301	,
 //_MPI_Type_hindexed	 =	302	,
 //_MPI_Type_hvector	 =	303	,
 _MPI_Type_indexed	 =	304	,
-_MPI_Type_lb	 =	305	,
+//_MPI_Type_lb	 =	305	,
 _MPI_Type_match_size	 =	306	,
 _MPI_Type_set_attr	 =	307	,
 _MPI_Type_set_name	 =	308	,
@@ -1370,7 +1370,7 @@ int             init_qmpi_struct        (void);
     int QMPI_Type_indexed(int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_lb ================== */
-    int QMPI_Type_lb(MPI_Datatype type, MPI_Aint *lb, int level,  vector* v);
+//    int QMPI_Type_lb(MPI_Datatype type, MPI_Aint *lb, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_match_size ================== */
     int QMPI_Type_match_size(int typeclass, int size, MPI_Datatype *type, int level,  vector* v);
