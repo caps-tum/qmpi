@@ -10,8 +10,12 @@ Dai Yang <d.yang@tum.de>
 
 ## Prerequisites
 
-- An MPI distribution, e.g. [OpenMPI](https://openmpi.org)
+- An MPI distribution, e.g. [OpenMPI](https://openmpi.org) 
 - C compiler and MPICC compiler
+
+## Notes
+- Master branch is compatible with MPI version 3 and requires some MPI funcitons which are removed in MPI version 4
+- The for MPI version 4 MPI-v4-development branch is under development and unstable at the moment.
 
 ## Building with Makefile
 
