@@ -47,7 +47,7 @@ _MPI_Accumulate	 =	1	,
 _MPI_Add_error_class	 =	2	,
 _MPI_Add_error_code	 =	3	,
 _MPI_Add_error_string	 =	4	,
-_MPI_Address	 =	5	,
+_MPI_Get_address	 =	5	,
 _MPI_Allgather	 =	6	,
 _MPI_Allgatherv	 =	7	,
 _MPI_Alloc_mem	 =	8	,
@@ -475,8 +475,8 @@ int             init_qmpi_struct        (void);
 /* ================== C Wrappers for MPI_Add_error_string ================== */
     int QMPI_Add_error_string(int errorcode, const char *string, int level ,vector* v);
 
-/* ================== C Wrappers for MPI_Address ================== */
-    int QMPI_Address(void *location, MPI_Aint *address, int level ,vector* v);
+/* ================== C Wrappers for MPI_Get_address ================== */
+    int QMPI_Get_address(void *location, MPI_Aint *address, int level ,vector* v);
 
 /* ================== C Wrappers for MPI_Allgather ================== */
     int QMPI_Allgather(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm, int level ,vector* v);
