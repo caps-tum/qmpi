@@ -4255,7 +4255,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_get_true_extent_x (MPI_Datatype datatype, MPI_Count *true_lb, MPI_Count *true_extent, int level, vector *v);\n
      
-    case 302:
+    /*case 302:
         va_start (argp,v);
 		typedef int  (*type_hindexed_func)  (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);
 		type_hindexed_func QMPI_Type_hindexed_ptr =  (type_hindexed_func) func_ptr;
@@ -4268,7 +4268,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);\n
-     
+     */
     case 303:
         va_start (argp,v);
 		typedef int  (*type_hvector_func)  (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);
@@ -9288,7 +9288,7 @@ _EXTERN_C_ int MPI_Type_get_true_extent_x (MPI_Datatype datatype, MPI_Count *tru
   return ret;
 }
 /* ================== C Wrappers for MPI_Type_hindexed ================== */
-_EXTERN_C_ int QMPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_hindexed ( count,  array_of_blocklengths, array_of_displacements, oldtype, newtype ) ;
 }
 _EXTERN_C_ int MPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype) { 
@@ -9300,7 +9300,7 @@ _EXTERN_C_ int MPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Ai
   typedef int (*_type_hindexed_func) (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);
   int ret= ( (_type_hindexed_func) f_dl) ( count,  array_of_blocklengths, array_of_displacements, oldtype, newtype, new_level, &v);
   return ret;
-}
+}*/
 /* ================== C Wrappers for MPI_Type_hvector ================== */
 _EXTERN_C_ int QMPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_hvector ( count, blocklength, stride, oldtype, newtype);
