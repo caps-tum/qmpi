@@ -354,7 +354,7 @@ _MPI_Type_set_name	 =	308	,
 _MPI_Type_size	 =	309	,
 _MPI_Type_size_x	 =	310	,
 //_MPI_Type_struct	 =	311	,
-_MPI_Type_ub	 =	312	,
+//_MPI_Type_ub	 =	312	,
 _MPI_Type_vector	 =	313	,
 _MPI_Unpack	 =	314	,
 _MPI_Unpack_external	 =	315	,
@@ -1391,7 +1391,7 @@ int             init_qmpi_struct        (void);
 //    int QMPI_Type_struct(int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_ub ================== */
-    int QMPI_Type_ub(MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v);
+//    int QMPI_Type_ub(MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v);
 
 /* ================== C Wrappers for MPI_Type_vector ================== */
     int QMPI_Type_vector(int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v);

@@ -4379,7 +4379,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Type_struct (int count, int array_of_blocklengths[], MPI_Aint array_of_displacements[], MPI_Datatype array_of_types[], MPI_Datatype *newtype, int level, vector *v);\n
     */ 
-    case 312:
+    /*case 312:
         va_start (argp,v);
 		typedef int  (*type_ub_func)  (MPI_Datatype mtype, MPI_Aint *ub, int level, vector *v);
 		type_ub_func QMPI_Type_ub_ptr =  (type_ub_func) func_ptr;
@@ -4389,7 +4389,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub, int level, vector *v);\n
-     
+    */ 
     case 313:
         va_start (argp,v);
 		typedef int  (*type_vector_func)  (int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level, vector *v);
@@ -9432,7 +9432,7 @@ _EXTERN_C_ int MPI_Type_struct (int count, int array_of_blocklengths[], MPI_Aint
 }
 */
 /* ================== C Wrappers for MPI_Type_ub ================== */
-_EXTERN_C_ int QMPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v){
   return PMPI_Type_ub ( mtype, ub);
 }
 _EXTERN_C_ int MPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub) { 
@@ -9444,7 +9444,7 @@ _EXTERN_C_ int MPI_Type_ub (MPI_Datatype mtype, MPI_Aint *ub) {
   typedef int (*_type_ub_func) (MPI_Datatype mtype, MPI_Aint *ub, int level,  vector* v);
   int ret= ( (_type_ub_func) f_dl) (mtype, ub, new_level, &v);
   return ret;
-}
+}*/
 /* ================== C Wrappers for MPI_Type_vector ================== */
 _EXTERN_C_ int QMPI_Type_vector (int count, int blocklength, int stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_vector ( count, blocklength, stride, oldtype, newtype);

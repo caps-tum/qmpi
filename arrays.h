@@ -127,7 +127,7 @@ void* QMPI_Array[]={
    /*,    &QMPI_Type_hvector*/,            &QMPI_Type_indexed/*,                 &QMPI_Type_lb*/
    ,    &QMPI_Type_match_size,         &QMPI_Type_set_attr,                &QMPI_Type_set_name
    ,    &QMPI_Type_size,               &QMPI_Type_size_x/*,                  &QMPI_Type_struct*/
-   ,    &QMPI_Type_ub,                 &QMPI_Type_vector,                  &QMPI_Unpack
+   /*,    &QMPI_Type_ub*/,                 &QMPI_Type_vector,                  &QMPI_Unpack
    ,    &QMPI_Unpack_external,         &QMPI_Unpublish_name,               &QMPI_Wait
    ,    &QMPI_Waitall,                 &QMPI_Waitany,                      &QMPI_Waitsome
    ,    &QMPI_Win_allocate,            &QMPI_Win_allocate_shared,          &QMPI_Win_attach
@@ -255,7 +255,7 @@ void* PMPI_Array[]={
    /*,    &PMPI_Type_hvector*/,            &PMPI_Type_indexed/*,                 &PMPI_Type_lb*/
    ,    &PMPI_Type_match_size,         &PMPI_Type_set_attr,                &PMPI_Type_set_name
    ,    &PMPI_Type_size,               &PMPI_Type_size_x/*,                  &PMPI_Type_struct */
-   ,    &PMPI_Type_ub,                 &PMPI_Type_vector,                  &PMPI_Unpack
+   /*,    &PMPI_Type_ub*/,                 &PMPI_Type_vector,                  &PMPI_Unpack
    ,    &PMPI_Unpack_external,         &PMPI_Unpublish_name,               &PMPI_Wait
    ,    &PMPI_Waitall,                 &PMPI_Waitany,                      &PMPI_Waitsome
    ,    &PMPI_Win_allocate,            &PMPI_Win_allocate_shared,          &PMPI_Win_attach
