@@ -9302,7 +9302,7 @@ _EXTERN_C_ int MPI_Type_hindexed (int count, int array_of_blocklengths[], MPI_Ai
   return ret;
 }*/
 /* ================== C Wrappers for MPI_Type_hvector ================== */
-_EXTERN_C_ int QMPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_hvector ( count, blocklength, stride, oldtype, newtype);
 }
 _EXTERN_C_ int MPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype) { 
@@ -9315,6 +9315,7 @@ _EXTERN_C_ int MPI_Type_hvector (int count, int blocklength, MPI_Aint stride, MP
   int ret= ( (_type_hvector_func) f_dl) (count, blocklength, stride, oldtype, newtype, new_level, &v);
   return ret;
 }
+*/
 /* ================== C Wrappers for MPI_Type_indexed ================== */
 _EXTERN_C_ int QMPI_Type_indexed (int count, const int array_of_blocklengths[], const int array_of_displacements[], MPI_Datatype oldtype, MPI_Datatype *newtype, int level,  vector* v){
   return PMPI_Type_indexed ( count, array_of_blocklengths, array_of_displacements, oldtype, newtype );
