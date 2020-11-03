@@ -7871,6 +7871,9 @@ _EXTERN_C_ int QMPI_Init_thread (int *argc, char ***argv, int required, int *pro
   return PMPI_Init_thread (argc, argv, required, provided);
 }
 _EXTERN_C_ int MPI_Init_thread (int *argc, char ***argv, int required, int *provided) { 
+
+  init_qmpi_struct();
+  
   void* f_dl=NULL;
   QMPI_TABLE_QUERY (_MPI_Init_thread,&f_dl, (*VECTOR_GET (&v, 0)).table );
   //int ret=EXEC_FUNC (f_dl,0,_MPI_Init_thread,&v,argc, argv, required, provided);
