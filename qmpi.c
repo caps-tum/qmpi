@@ -1133,7 +1133,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		 
         // int QMPI_Errhandler_free (MPI_Errhandler *errhandler, int level, vector *v);\n
      
-    case 73:
+    /*case 73:
         va_start (argp,v);
 		typedef int  (*errhandler_get_func)  (MPI_Comm comm, MPI_Errhandler *errhandler, int level, vector *v);
 		errhandler_get_func QMPI_Errhandler_get_ptr =  (errhandler_get_func) func_ptr;
@@ -1143,7 +1143,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
 		break;
 		 
         // int QMPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler, int level, vector *v);\n
-     
+    */ 
     case 74:
         va_start (argp,v);
 		typedef int  (*errhandler_set_func)  (MPI_Comm comm, MPI_Errhandler errhandler, int level, vector *v);
@@ -6085,7 +6085,7 @@ _EXTERN_C_ int MPI_Errhandler_free (MPI_Errhandler *errhandler) {
   return ret;
 }
 /* ================== C Wrappers for MPI_Errhandler_get ================== */
-_EXTERN_C_ int QMPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler, int level,  vector* v){
+/*_EXTERN_C_ int QMPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler, int level,  vector* v){
   return PMPI_Errhandler_get (comm, errhandler);
 }
 _EXTERN_C_ int MPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler) { 
@@ -6098,6 +6098,7 @@ _EXTERN_C_ int MPI_Errhandler_get (MPI_Comm comm, MPI_Errhandler *errhandler) {
   int ret= ( (_errhandler_get_func) f_dl) (comm, errhandler, new_level, &v);
   return ret;
 }
+*/
 /* ================== C Wrappers for MPI_Errhandler_set ================== */
 _EXTERN_C_ int QMPI_Errhandler_set (MPI_Comm comm, MPI_Errhandler errhandler, int level,  vector* v){
   return PMPI_Errhandler_set (comm, errhandler);
