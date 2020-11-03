@@ -5,7 +5,9 @@
  
 int main() {
 
-	MPI_Init(NULL,NULL);
+	//MPI_Init(NULL,NULL);
+	int i = 0; 
+	MPI_Init_thread(NULL,NULL,MPI_THREAD_SINGLE, &i);
         int rank=0;
 	
 	MPI_Pcontrol(5);

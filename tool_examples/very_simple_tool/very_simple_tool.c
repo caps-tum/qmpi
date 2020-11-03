@@ -170,7 +170,7 @@ _EXTERN_C_ char* get_interceptions(int i )
 /* ================== C Wrappers for MPI_Init ================== */
 
 
-_EXTERN_C_ int E_Init(int *argc, char ***argv, int i,vector * v) { 
+_EXTERN_C_ int E_Init(int *argc, char ***argv, int i,vector * v) {
   void* f_dl=NULL;
   QMPI_TABLE_QUERY(200,&f_dl,(*VECTOR_GET(v,i)).table );
   int ret=EXEC_FUNC(f_dl,i,200,v,argc,argv);
