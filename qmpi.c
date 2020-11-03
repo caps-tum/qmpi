@@ -4946,12 +4946,7 @@ int exec_func (void* func_ptr,int level ,_MPI_funcs func_index, vector* v , ...)
         return ret;
 }
 
-/* ================== C Wrappers for MPI_Init ================== */
-_EXTERN_C_ int QMPI_Init (int *argc, char ***argv, int level,  vector* v){
-  return PMPI_Init (argc, argv);
-}
-
-_EXTERN_C_ int MPI_Init (int *argc, char ***argv) { 
+int init_qmpi_struct(void){
   vector_init (&v);
 
   struct dynamic_lib dl0={"./qmpi",NULL,NULL,NULL,0};
@@ -5043,6 +5038,16 @@ _EXTERN_C_ int MPI_Init (int *argc, char ***argv) {
       }
     }
   }
+
+}
+/* ================== C Wrappers for MPI_Init ================== */
+_EXTERN_C_ int QMPI_Init (int *argc, char ***argv, int level,  vector* v){
+  return PMPI_Init (argc, argv);
+}
+
+_EXTERN_C_ int MPI_Init (int *argc, char ***argv) { 
+  
+  init_qmpi_struct();
   void* f_dl=NULL;
   QMPI_TABLE_QUERY (_MPI_Init,&f_dl, (*VECTOR_GET (&v, 0)).table );
   //int ret=EXEC_FUNC (f_dl,0,_MPI_Init,&v,argc,argv);

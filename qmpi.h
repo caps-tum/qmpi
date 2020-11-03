@@ -434,26 +434,26 @@ typedef void* dynamic_lib_handle;
 
 struct dynamic_lib {
 	//TODO: fix this path variable (fixed size array )
-        char                            path[100];
-//        char*                         path;
-        dynamic_lib_handle              handle;
-        char*                           mpi_interceptions[NUM_MPI_FUNCS ];
+    char                            path[100];
+//  char*                         path;
+    dynamic_lib_handle              handle;
+    char*                           mpi_interceptions[NUM_MPI_FUNCS ];
 	cell				table[NUM_MPI_FUNCS];
 	void*				context;
 };
 
 
-void* 			QMPI_Get_context	(vector* v, int i);
-void 			QMPI_Set_context	(vector *v, int index, void* cntxt, size_t sz);
-int 			End_Tool 		(int *argc,char ***argv,int i,vector* v);
-dynamic_lib_handle 	load_lib 		(const char* path);
-void*   		get_func_ptr		( const dynamic_lib_handle handle, char* func_name );
-int  			exec_func		(void* func_ptr, int level ,_MPI_funcs func_index,vector* v, ...);
-void    		get_tool_interceptions	( struct dynamic_lib* l );
-int 			QMPI_Table_query	(_MPI_funcs func_index, void** func_ptr, cell table[]);
-int 			MPI_Table_query		(_MPI_funcs func_index, void** func_ptr,  cell table[]);
-int 			split 			(char* paths, int next);
-
+void* 			QMPI_Get_context	    (vector* v, int i);
+void 			QMPI_Set_context	    (vector *v, int index, void* cntxt, size_t sz);
+int 			End_Tool 		        (int *argc,char ***argv,int i,vector* v);
+dynamic_lib_handle 	load_lib 		    (const char* path);
+void*   		get_func_ptr		    ( const dynamic_lib_handle handle, char* func_name );
+int  			exec_func               (void* func_ptr, int level ,_MPI_funcs func_index,vector* v, ...);
+void    		get_tool_interceptions  ( struct dynamic_lib* l );
+int 			QMPI_Table_query	    (_MPI_funcs func_index, void** func_ptr, cell table[]);
+int 			MPI_Table_query		    (_MPI_funcs func_index, void** func_ptr,  cell table[]);
+int 			split 			        (char* paths, int next);
+int             init_qmpi_struct        (void)
 
 /* ================== C Wrappers for MPI_Send ================== */
     int QMPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm, int level ,vector* v);
